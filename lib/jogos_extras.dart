@@ -411,6 +411,7 @@ class JogoMemoria extends StatefulWidget {
 
 class _JogoMemoriaState extends State<JogoMemoria> {
   final FlutterTts _vozMemoria = FlutterTts();
+  bool get ingles => ConfiguracoesJogo.instancia.idioma == 'en-US';
 
   final Map<String, String> nomesAnimais = {
     '🐶': 'cachorro',
@@ -422,7 +423,7 @@ class _JogoMemoriaState extends State<JogoMemoria> {
   };
 
   void _repetirInstrucoes() {
-    _falarMemoria('Vire duas cartas e encontre os animais iguais. Toque em uma carta para começar!');
+    _falarMemoria(ingles ? 'Flip two cards and find matching animals. Tap a card to begin!' : 'Vire duas cartas e encontre os animais iguais. Toque em uma carta para começar!');
   }
 
   Future<void> _falarMemoria(String mensagem) async {
@@ -430,7 +431,6 @@ class _JogoMemoriaState extends State<JogoMemoria> {
     if (!mounted) return;
 
     await _vozMemoria.stop();
-    await _vozMemoria.setLanguage('pt-BR');
     await VozMiguelito.configurar(_vozMemoria);
 
     if (!mounted) return;
@@ -449,11 +449,9 @@ class _JogoMemoriaState extends State<JogoMemoria> {
 
       final nome = prefs.getString('nome_crianca')?.trim() ?? '';
 
-      _falarMemoria(
-        'Olá${nome.isNotEmpty ? ', $nome' : ''}! '
-        'Vamos brincar de memória? '
-        'Vire duas cartas e tente encontrar os animais iguais!',
-      );
+      _falarMemoria(ingles
+        ? 'Hello${nome.isNotEmpty ? ', $nome' : ''}! Let’s play memory! Flip two cards and find the matching animals!'
+        : 'Olá${nome.isNotEmpty ? ', $nome' : ''}! Vamos brincar de memória? Vire duas cartas e tente encontrar os animais iguais!');
     });
   }
 
@@ -475,14 +473,14 @@ class _JogoMemoriaState extends State<JogoMemoria> {
   void escolher(int i) {
     if (bloqueado || achadas.contains(i) || primeira == i) return;
 
-    final nomeAnimal = nomesAnimais[cartas[i]] ?? 'animal';
+    final nomeAnimal = ingles ? ({'🐶': 'dog', '🐱': 'cat', '🐸': 'frog', '🦋': 'butterfly', '🐼': 'panda', '🦁': 'lion'}[cartas[i]] ?? 'animal') : (nomesAnimais[cartas[i]] ?? 'animal');
 
     if (primeira == null) {
       setState(() {
         primeira = i;
       });
 
-      _falarMemoria('Você encontrou um $nomeAnimal!');
+      _falarMemoria(ingles ? 'You found a $nomeAnimal!' : 'Você encontrou um $nomeAnimal!');
       return;
     }
 
@@ -498,8 +496,8 @@ class _JogoMemoriaState extends State<JogoMemoria> {
 
     _falarMemoria(
       acertou
-          ? 'Muito bem! Você encontrou um par de $nomeAnimal!'
-          : 'Essas cartas são diferentes. Continue tentando!',
+          ? (ingles ? 'Well done! You found a matching pair of $nomeAnimal!' : 'Muito bem! Você encontrou um par de $nomeAnimal!')
+          : (ingles ? 'These cards are different. Keep trying!' : 'Essas cartas são diferentes. Continue tentando!'),
     );
 
     Future.delayed(const Duration(milliseconds: 850), () {
@@ -514,7 +512,7 @@ class _JogoMemoriaState extends State<JogoMemoria> {
 
       if (acertou && achadas.length == cartas.length) {
         _falarMemoria(
-          'Parabéns! Você encontrou todos os pares! Você é incrível!',
+          ingles ? 'Congratulations! You found every pair! Amazing!' : 'Parabéns! Você encontrou todos os pares! Você é incrível!',
         );
       }
     });
@@ -522,7 +520,7 @@ class _JogoMemoriaState extends State<JogoMemoria> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('🧠 Jogo da Memória')),
+    appBar: AppBar(title: Text(ingles ? '🧠 Memory Game' : '🧠 Jogo da Memória')),
     body: Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 550),
@@ -531,8 +529,8 @@ class _JogoMemoriaState extends State<JogoMemoria> {
           children: [
             Text(
               achadas.length == cartas.length
-                  ? '🏆 Parabéns! Você encontrou todos os pares!'
-                  : 'Encontre os pares! • Tentativas: $tentativas',
+                  ? (ingles ? '🏆 Congratulations! You found every pair!' : '🏆 Parabéns! Você encontrou todos os pares!')
+                  : (ingles ? 'Find the pairs! • Attempts: $tentativas' : 'Encontre os pares! • Tentativas: $tentativas'),
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 21),
             ),
@@ -541,7 +539,7 @@ class _JogoMemoriaState extends State<JogoMemoria> {
               TextButton.icon(
                 onPressed: _repetirInstrucoes,
                 icon: const Icon(Icons.volume_up),
-                label: const Text('Ouvir instruções novamente'),
+                label: Text(ingles ? 'Hear instructions again' : 'Ouvir instruções novamente'),
               ),
             const SizedBox(height: 20),
             GridView.builder(
@@ -576,7 +574,7 @@ class _JogoMemoriaState extends State<JogoMemoria> {
                   context,
                   MaterialPageRoute(builder: (_) => const JogoMemoria()),
                 ),
-                child: const Text('Jogar novamente'),
+                child: Text(ingles ? 'Play again' : 'Jogar novamente'),
               ),
           ],
         ),
