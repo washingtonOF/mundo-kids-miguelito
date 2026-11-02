@@ -815,6 +815,19 @@ class _TelaMatematicaState extends State<TelaMatematica> {
                     ),
                   ],
                 ),
+                if (ConfiguracoesJogo.instancia.instrucoesAudio)
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: TextButton.icon(
+                      onPressed: respondida
+                          ? () => _falarResultado(acertou)
+                          : _falarPergunta,
+                      icon: const Icon(Icons.volume_up),
+                      label: Text(ConfiguracoesJogo.instancia.idioma == 'en-US'
+                          ? (respondida ? 'Hear feedback again' : 'Hear question and options')
+                          : (respondida ? 'Ouvir resultado novamente' : 'Ouvir pergunta e alternativas')),
+                    ),
+                  ),
                 const SizedBox(height: 12),
                 LinearProgressIndicator(
                   value: (_indice + 1) / 10,
