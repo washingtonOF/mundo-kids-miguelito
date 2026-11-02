@@ -979,6 +979,24 @@ class TelaIdentificacao extends StatefulWidget {
 
 class _TelaIdentificacaoState extends State<TelaIdentificacao> {
   final TextEditingController _nomeController = TextEditingController();
+  String _idioma = 'pt-BR';
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarIdioma();
+  }
+
+  Future<void> _carregarIdioma() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) setState(() => _idioma = prefs.getString('idioma_miguelito') ?? 'pt-BR');
+  }
+
+  Future<void> _mudarIdioma(String idioma) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('idioma_miguelito', idioma);
+    if (mounted) setState(() => _idioma = idioma);
+  }
 
   Future<void> _salvarNome() async {
     final nome = _nomeController.text.trim();
@@ -1031,17 +1049,25 @@ class _TelaIdentificacaoState extends State<TelaIdentificacao> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text(
-                    '🌟 Olá! Bem-vindo ao Miguelito!',
+                  Text(
+                    _idioma == 'pt-BR' ? '🌟 Olá! Bem-vindo ao Miguelito!' : '🌟 Welcome to Miguelito!',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 20),
-                  const Text(
-                    'Olá! Eu sou o Miguelito!\n'
-                    'Como você se chama?',
+                  Text(
+                    _idioma == 'pt-BR' ? 'Olá! Eu sou o Miguelito!\nComo você se chama?' : 'Hi! I am Miguelito!\nWhat is your name?',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 20),
+                  ),
+                  const SizedBox(height: 18),
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'pt-BR', label: Text('🇧🇷 Português')),
+                      ButtonSegment(value: 'en-US', label: Text('🇺🇸 English')),
+                    ],
+                    selected: {_idioma},
+                    onSelectionChanged: (v) => _mudarIdioma(v.first),
                   ),
                   const SizedBox(height: 24),
 
@@ -1053,8 +1079,8 @@ class _TelaIdentificacaoState extends State<TelaIdentificacao> {
                         maxLength: 30,
                         textCapitalization: TextCapitalization.words,
                         decoration: InputDecoration(
-                          labelText: 'Seu primeiro nome',
-                          hintText: 'Digite seu nome aqui',
+                          labelText: _idioma == 'pt-BR' ? 'Seu primeiro nome' : 'Your first name',
+                          hintText: _idioma == 'pt-BR' ? 'Digite seu nome aqui' : 'Enter your name',
                           prefixIcon: const Icon(
                             Icons.person,
                             color: Color(0xFF6F42C1),
@@ -1084,7 +1110,7 @@ class _TelaIdentificacaoState extends State<TelaIdentificacao> {
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: _salvarNome,
-                    child: const Text('Começar minha aventura! 🚀'),
+                    child: Text(_idioma == 'pt-BR' ? 'Começar minha aventura! 🚀' : 'Start my adventure! 🚀'),
                   ),
                 ], // Fecha a lista children
               ), // Fecha a Column
