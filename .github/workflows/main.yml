@@ -57,6 +57,14 @@ jobs:
       - name: Gerar APK
         run: flutter build apk --release
 
+      - name: Verificar assinatura do APK
+        run: |
+          APK="build/app/outputs/flutter-apk/app-release.apk"
+          test -s "$APK" || { echo "::error::APK não encontrado ou vazio."; exit 1; }
+          APKSIGNER=$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -n 1)
+          test -n "$APKSIGNER" || { echo "::error::apksigner não encontrado no Android SDK."; exit 1; }
+          "$APKSIGNER" verify --verbose "$APK"
+
       - name: Disponibilizar APK
         uses: actions/upload-artifact@v4
         with:
