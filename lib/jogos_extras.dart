@@ -165,6 +165,14 @@ const perguntasMatematica = [
   Pergunta('Qual número vem depois do 29?', ['28', '31', '30', '39'], 2),
 ];
 
+const perguntasMatematicaIngles = [
+  Pergunta('What is 4 + 5?', ['8', '9', '10', '11'], 1),
+  Pergunta('What is 12 - 7?', ['4', '5', '6', '7'], 1),
+  Pergunta('What is 3 × 4?', ['7', '12', '14', '16'], 1),
+  Pergunta('What is 20 ÷ 5?', ['2', '3', '4', '5'], 2),
+  Pergunta('Which number comes after 29?', ['28', '31', '30', '39'], 2),
+];
+
 class JogoQuiz extends StatefulWidget {
   final String tipo;
   const JogoQuiz({super.key, required this.tipo});
@@ -678,7 +686,7 @@ class _BatalhaEquipesState extends State<BatalhaEquipes> {
   bool get ingles => ConfiguracoesJogo.instancia.idioma == 'en-US';
 
   late final List<Pergunta> perguntas = [
-    ...perguntasMatematica,
+    ...(ingles ? perguntasMatematicaIngles : perguntasMatematica),
     ...(ingles ? perguntasPortuguesIngles : perguntasPortugues),
     ...(ingles ? perguntasCoresIngles : perguntasCores),
   ]..shuffle(Random());
