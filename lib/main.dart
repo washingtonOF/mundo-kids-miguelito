@@ -98,6 +98,7 @@ class _PintorMiguelito extends CustomPainter {
     final amarelo = Paint()..color = const Color(0xFFFFD332);
     final azul = Paint()..color = const Color(0xFF1765D1);
     final escuro = Paint()..color = const Color(0xFF372510);
+    final cabelo = Paint()..color = const Color(0xFF171719);
     final branco = Paint()..color = Colors.white;
     void oval(Rect r, Paint p) => canvas.drawOval(r, p);
     void rr(Rect r, double rad, Paint p) => canvas.drawRRect(
@@ -118,7 +119,7 @@ class _PintorMiguelito extends CustomPainter {
       const Rect.fromLTWH(56, 18, 45, 35),
       const Rect.fromLTWH(88, 11, 48, 42),
       const Rect.fromLTWH(124, 22, 40, 34),
-    ]) { oval(r, amarelo); }
+    ]) { oval(r, cabelo); }
     // Olhos grandes e sorriso.
     oval(const Rect.fromLTWH(72, 84, 29, 37), branco);
     oval(const Rect.fromLTWH(120, 84, 29, 37), branco);
@@ -161,111 +162,133 @@ class _TelaInicialState extends State<TelaInicial> {
     return AnimatedBuilder(
       animation: ConfiguracoesJogo.instancia,
       builder: (context, _) {
-        final _idioma = ConfiguracoesJogo.instancia.idioma;
+        final ingles = ConfiguracoesJogo.instancia.idioma == 'en-US';
         return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/fundo_inicio.png'),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 18),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 470),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const AvatarMiguelito(tamanho: 240),
-                    const SizedBox(
-                      width: double.infinity,
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          'MIGUELITO',
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          style: TextStyle(
-                            fontSize: 44, fontWeight: FontWeight.w900,
-                            color: Color(0xFFFFC928),
-                            shadows: [
-                              Shadow(color: Color(0xFF143D8B), offset: Offset(2, 3), blurRadius: 3),
-                              Shadow(color: Colors.white, blurRadius: 9),
-                            ],
-                          ),
+          body: LayoutBuilder(
+            builder: (context, dimensoes) {
+              final largura = dimensoes.maxWidth;
+              final compacto = dimensoes.maxHeight < 680;
+              final tamanhoMascote = (largura * 0.56).clamp(145.0, compacto ? 190.0 : 245.0);
+              return Container(
+                width: double.infinity,
+                height: double.infinity,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Color(0xFF159BEE), Color(0xFF83D9FF), Color(0xFF9CE63A)],
+                    stops: [0, 0.68, 1],
+                  ),
+                ),
+                child: SafeArea(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 440),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: IconButton.filledTonal(
+                                tooltip: ingles ? 'Settings' : 'Configurações',
+                                onPressed: () => Navigator.push(context,
+                                  MaterialPageRoute(builder: (_) => const TelaConfiguracoes())),
+                                icon: const Icon(Icons.settings, size: 28),
+                              ),
+                            ),
+                            const Icon(Icons.school, size: 45, color: Color(0xFFFFDA2D)),
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text('Miguelito', style: TextStyle(
+                                fontSize: compacto ? 49 : 57,
+                                fontWeight: FontWeight.w900,
+                                color: const Color(0xFFFFD22A),
+                                shadows: const [
+                                  Shadow(color: Color(0xFF063D9E), offset: Offset(3, 5), blurRadius: 2),
+                                  Shadow(color: Colors.white, blurRadius: 7),
+                                ],
+                              )),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF1765D1),
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: Text(ingles ? 'Learning Through Play' : 'Aprender Brincando',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(color: Colors.white,
+                                  fontSize: 20, fontWeight: FontWeight.w800)),
+                            ),
+                            SizedBox(height: compacto ? 4 : 14),
+                            AvatarMiguelito(tamanho: tamanhoMascote),
+                            SizedBox(height: compacto ? 8 : 18),
+                            Row(
+                              children: [
+                                Expanded(child: _botaoIdioma('pt-BR', '🇧🇷 Português')),
+                                const SizedBox(width: 8),
+                                Expanded(child: _botaoIdioma('en-US', '🇺🇸 English')),
+                              ],
+                            ),
+                            const SizedBox(height: 18),
+                            SizedBox(
+                              width: double.infinity,
+                              height: 68,
+                              child: FilledButton.icon(
+                                onPressed: () => Navigator.push(context,
+                                  MaterialPageRoute(builder: (_) => const TelaModoJogo())),
+                                icon: const Icon(Icons.play_arrow_rounded, size: 36),
+                                label: Text(ingles ? 'START' : 'INICIAR',
+                                  style: const TextStyle(fontSize: 27, fontWeight: FontWeight.w900)),
+                                style: FilledButton.styleFrom(
+                                  backgroundColor: const Color(0xFF12BA13),
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(26)),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            const Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Icon(Icons.menu_book, size: 36, color: Color(0xFF1857B3)),
+                                Icon(Icons.edit, size: 32, color: Color(0xFFFFD22A)),
+                                Icon(Icons.public, size: 36, color: Color(0xFF1857B3)),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    SegmentedButton<String>(
-                      segments: const [
-                        ButtonSegment(value: 'pt-BR', label: Text('🇧🇷 Português')),
-                        ButtonSegment(value: 'en-US', label: Text('🇺🇸 English')),
-                      ],
-                      selected: {_idioma},
-                      onSelectionChanged: (idiomas) =>
-                          ConfiguracoesJogo.instancia.alterarIdioma(idiomas.first),
-                    ),
-                    const SizedBox(height: 16),
-                    Container(
-                      padding: const EdgeInsets.all(22),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.94),
-                        borderRadius: BorderRadius.circular(30),
-                        boxShadow: [
-                          BoxShadow(color: Colors.black.withValues(alpha: 0.12), blurRadius: 18),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Text(_idioma == 'pt-BR' ? '🌟 Sua aventura vai começar!' : '🌟 Your adventure is about to begin!',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Color(0xFF31235B))),
-                          const SizedBox(height: 12),
-                          Text(_idioma == 'pt-BR' ? 'Aprenda, jogue e divirta-se com o Miguelito!' : 'Learn, play and have fun with Miguelito!',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 18, color: Color(0xFF31235B))),
-                          const SizedBox(height: 24),
-                          SizedBox(
-                            width: double.infinity,
-                            child: FilledButton.icon(
-                              onPressed: () => Navigator.push(context,
-                                MaterialPageRoute(builder: (_) => const TelaModoJogo())),
-                              icon: const Icon(Icons.sports_esports),
-                              label: Text(_idioma == 'pt-BR' ? 'COMEÇAR A JOGAR' : 'START PLAYING'),
-                              style: FilledButton.styleFrom(
-                                backgroundColor: const Color(0xFF19AF44),
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(vertical: 19),
-                                textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    IconButton(
-                      tooltip: _idioma == 'pt-BR' ? 'Configurações' : 'Settings',
-                      onPressed: () => Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => const TelaConfiguracoes())),
-                      icon: const Icon(Icons.settings, color: Color(0xFF31235B), size: 32),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
+              );
+            },
           ),
-        ),
-      ),
-    );
+        );
       },
+    );
+  }
+
+  Widget _botaoIdioma(String idioma, String rotulo) {
+    final selecionado = ConfiguracoesJogo.instancia.idioma == idioma;
+    return OutlinedButton(
+      onPressed: () => ConfiguracoesJogo.instancia.alterarIdioma(idioma),
+      style: OutlinedButton.styleFrom(
+        backgroundColor: Colors.white,
+        foregroundColor: const Color(0xFF142857),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 14),
+        side: BorderSide(
+          color: selecionado ? const Color(0xFF168D2A) : Colors.white,
+          width: selecionado ? 3 : 1,
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+      ),
+      child: FittedBox(fit: BoxFit.scaleDown,
+        child: Text(rotulo, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold))),
     );
   }
 }
