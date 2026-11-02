@@ -88,6 +88,21 @@ const perguntasPortugues = [
   ], 2),
   Pergunta('Qual palavra tem 4 letras?', ['Sol', 'Bola', 'Caderno', 'Pé'], 1),
 ];
+// Exercícios de vocabulário português com instruções em inglês.
+// A atividade continua ensinando palavras portuguesas, inclusive no modo inglês.
+const perguntasPortuguesIngles = [
+  Pergunta('Which Portuguese word is spelled correctly?', ['Caza', 'Casa', 'Cassa', 'Cassa'], 1),
+  Pergunta('What is the first letter of BOLA?', ['A', 'B', 'L', 'O'], 1),
+  Pergunta('How many syllables are in SAPATO?', ['1', '2', '3', '4'], 2),
+  Pergunta('What is the plural of FLOR in Portuguese?', ['Floras', 'Flores', 'Florão', 'Flor'], 1),
+  Pergunta('Which Portuguese word rhymes with PÃO?', ['Mão', 'Sol', 'Lua', 'Casa'], 0),
+  Pergunta('Complete the Portuguese sentence: O gato ___ leite.', ['bebem', 'bebe', 'beberam', 'bebemos'], 1),
+  Pergunta('Which Portuguese word names an animal?', ['Mesa', 'Livro', 'Cachorro', 'Janela'], 2),
+  Pergunta('Which Portuguese word means the opposite of ALTO?', ['Grande', 'Baixo', 'Longo', 'Forte'], 1),
+  Pergunta('Which Portuguese sentence is a question?', ['Bom dia.', 'Que legal!', 'Como você está?', 'Vamos brincar.'], 2),
+  Pergunta('Which Portuguese word has four letters?', ['Sol', 'Bola', 'Caderno', 'Pé'], 1),
+];
+
 const perguntasCores = [
   Pergunta('🔴 Qual é esta cor?', ['Azul', 'Verde', 'Vermelho', 'Amarelo'], 2),
   Pergunta('🔺 Qual é esta forma?', [
@@ -168,12 +183,12 @@ class _JogoQuizState extends State<JogoQuiz> {
     final categoria = widget.tipo == 'Português' ? 'portugues' : 'cores';
     final ingles = ConfiguracoesJogo.instancia.idioma == 'en-US';
     final originais = widget.tipo == 'Português'
-        ? perguntasPortugues
+        ? (ingles ? perguntasPortuguesIngles : perguntasPortugues)
         : (ingles ? perguntasCoresIngles : perguntasCores);
-    // O banco adicional ainda é português; não misturar idiomas na atividade visual.
+    // O banco adicional ainda não foi localizado; evitar instruções em idioma misturado.
     final todas = <Pergunta>[
       ...originais,
-      if (!ingles || widget.tipo == 'Português')
+      if (!ingles)
         for (final q in banco.questoesExtras[categoria]!)
           Pergunta(q.texto, q.opcoes, q.correta),
     ]..shuffle(Random());
