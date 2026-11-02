@@ -305,11 +305,12 @@ class TelaJogos extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const atividades = [
-      ('🔢', 'Matemática'),
-      ('🔤', 'Português'),
-      ('🧠', 'Memória'),
-      ('🎨', 'Cores e formas'),
+    final ingles = ConfiguracoesJogo.instancia.idioma == 'en-US';
+    final atividades = [
+      ('🔢', ingles ? 'Math' : 'Matemática'),
+      ('🔤', ingles ? 'Portuguese' : 'Português'),
+      ('🧠', ingles ? 'Memory' : 'Memória'),
+      ('🎨', ingles ? 'Colors and shapes' : 'Cores e formas'),
     ];
 
     void abrirAtividade(int index) {
@@ -332,7 +333,7 @@ class TelaJogos extends StatelessWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('🎮 Escolha uma aventura!'),
+        title: Text(ConfiguracoesJogo.instancia.idioma == 'pt-BR' ? '🎮 Escolha uma aventura!' : '🎮 Choose an adventure!'),
         backgroundColor: Colors.white.withValues(alpha: 0.85),
       ),
       body: Container(
@@ -359,8 +360,8 @@ class TelaJogos extends StatelessWidget {
                         color: Colors.white.withValues(alpha: 0.88),
                         borderRadius: BorderRadius.circular(18),
                       ),
-                      child: const Text(
-                        'Qual aventura vamos jogar hoje?',
+                      child: Text(
+                        ingles ? 'Which adventure shall we play today?' : 'Qual aventura vamos jogar hoje?',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 23,
