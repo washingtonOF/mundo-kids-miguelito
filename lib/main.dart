@@ -1028,8 +1028,7 @@ class _TelaIdentificacaoState extends State<TelaIdentificacao> {
   }
 
   Future<void> _mudarIdioma(String idioma) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('idioma_miguelito', idioma);
+    await ConfiguracoesJogo.instancia.alterarIdioma(idioma);
     if (mounted) setState(() => _idioma = idioma);
   }
 
@@ -1063,11 +1062,12 @@ class _TelaIdentificacaoState extends State<TelaIdentificacao> {
             fit: BoxFit.cover,
           ),
         ),
-        child: Align(
-          alignment: const Alignment(0, -0.55),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Container(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+            child: Center(
+              child: Container(
               constraints: const BoxConstraints(maxWidth: 400),
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
@@ -1149,9 +1149,10 @@ class _TelaIdentificacaoState extends State<TelaIdentificacao> {
                   ),
                 ], // Fecha a lista children
               ), // Fecha a Column
-            ), // Container do formulário
-          ), // Padding
-        ), // Align
+              ), // Container do formulário
+            ), // Center
+          ), // SingleChildScrollView
+        ), // SafeArea
       ), // Container do fundo
     ); // Scaffold
   }
