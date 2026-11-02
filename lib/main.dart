@@ -53,7 +53,10 @@ class MundoKidsApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6B4EE6)),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFFFFC928),
+          brightness: Brightness.light,
+        ),
         scaffoldBackgroundColor: const Color(0xFFFFF6DB),
       ),
       initialRoute: '/',
