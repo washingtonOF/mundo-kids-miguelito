@@ -13,6 +13,28 @@ class ConfiguracoesJogo extends ChangeNotifier {
   bool _modoTranquilo = true;
   bool _instrucoesAudio = true;
   bool _cronometro = true;
+  String _idioma = 'pt-BR';
+  String get idioma => _idioma;
+
+  Future<void> carregar() async {
+    final prefs = await SharedPreferences.getInstance();
+    _nivel = NivelJogo.values.firstWhere(
+      (e) => e.name == prefs.getString('nivel_miguelito'),
+      orElse: () => NivelJogo.adaptativo,
+    );
+    _modoTranquilo = prefs.getBool('modo_tranquilo_miguelito') ?? true;
+    _instrucoesAudio = prefs.getBool('audio_miguelito') ?? true;
+    _cronometro = prefs.getBool('cronometro_miguelito') ?? true;
+    _idioma = prefs.getString('idioma_miguelito') ?? 'pt-BR';
+    notifyListeners();
+  }
+
+  Future<void> alterarIdioma(String valor) async {
+    _idioma = valor;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('idioma_miguelito', valor);
+  }
 
   NivelJogo get nivel => _nivel;
   bool get modoTranquilo => _modoTranquilo;
@@ -22,21 +44,25 @@ class ConfiguracoesJogo extends ChangeNotifier {
   void alterarNivel(NivelJogo valor) {
     _nivel = valor;
     notifyListeners();
+    SharedPreferences.getInstance().then((prefs) => prefs.setString('nivel_miguelito', valor.name));
   }
 
   void alterarModoTranquilo(bool valor) {
     _modoTranquilo = valor;
     notifyListeners();
+    SharedPreferences.getInstance().then((prefs) => prefs.setBool('modo_tranquilo_miguelito', valor));
   }
 
   void alterarInstrucoesAudio(bool valor) {
     _instrucoesAudio = valor;
     notifyListeners();
+    SharedPreferences.getInstance().then((prefs) => prefs.setBool('audio_miguelito', valor));
   }
 
   void alterarCronometro(bool valor) {
     _cronometro = valor;
     notifyListeners();
+    SharedPreferences.getInstance().then((prefs) => prefs.setBool('cronometro_miguelito', valor));
   }
 }
 
@@ -110,6 +136,22 @@ class TelaConfiguracoes extends StatelessWidget {
                 onChanged: config.alterarCronometro,
               ),
               const Divider(height: 32),
+              ListTile(
+                leading: const Icon(Icons.language),
+                title: const Text('Idioma / Language'),
+                subtitle: Text(config.idioma == 'pt-BR' ? '🇧🇷 Português' : '🇺🇸 English'),
+                trailing: DropdownButton<String>(
+                  value: config.idioma,
+                  items: const [
+                    DropdownMenuItem(value: 'pt-BR', child: Text('Português')),
+                    DropdownMenuItem(value: 'en-US', child: Text('English')),
+                  ],
+                  onChanged: (valor) {
+                    if (valor != null) config.alterarIdioma(valor);
+                  },
+                ),
+              ),
+              const Divider(height: 16),
 
               ListTile(
                 leading: const Icon(Icons.logout, color: Colors.deepPurple),
