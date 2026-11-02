@@ -7,6 +7,14 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Credenciais de release ficam fora do repositório, em variáveis de ambiente.
+val releaseStoreFile = System.getenv("MIGUELITO_KEYSTORE_PATH")
+val releaseStorePassword = System.getenv("MIGUELITO_STORE_PASSWORD")
+val releaseKeyAlias = System.getenv("MIGUELITO_KEY_ALIAS")
+val releaseKeyPassword = System.getenv("MIGUELITO_KEY_PASSWORD")
+val releaseSigningReady = listOf(releaseStoreFile, releaseStorePassword, releaseKeyAlias, releaseKeyPassword)
+    .all { !it.isNullOrBlank() }
+
 android {
     namespace = "com.example.mundo_kids"
     compileSdk = flutter.compileSdkVersion
@@ -32,11 +40,23 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        if (releaseSigningReady) {
+            create("miguelitoRelease") {
+                storeFile = file(releaseStoreFile!!)
+                storePassword = releaseStorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            // Nunca distribuir release assinado com a chave de desenvolvimento.
+            if (releaseSigningReady) {
+                signingConfig = signingConfigs.getByName("miguelitoRelease")
+            }
         }
     }
 }
