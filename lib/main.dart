@@ -746,8 +746,9 @@ class _TelaMatematicaState extends State<TelaMatematica> {
           final limite = nivelAtual == Nivel.facil
               ? 20
               : (nivelAtual == Nivel.medio ? 60 : 150);
-          a = _entre(1, limite);
-          b = _entre(1, limite);
+          // O resultado também deve respeitar o teto da dificuldade.
+          a = _entre(1, limite - 1);
+          b = _entre(1, limite - a);
           resultado = a + b;
           break;
 
@@ -762,7 +763,7 @@ class _TelaMatematicaState extends State<TelaMatematica> {
 
         case '×':
           a = _entre(2, nivelAtual == Nivel.medio ? 9 : 12);
-          b = _entre(2, 12);
+          b = _entre(2, nivelAtual == Nivel.medio ? 9 : 12);
           resultado = a * b;
           break;
 
