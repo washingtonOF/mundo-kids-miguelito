@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "857556637755",
+    "project_id": "mundo-kids-ee4e7",
+    "storage_bucket": "mundo-kids-ee4e7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:857556637755:android:aa72faa32d2cc98d95a41e",
+        "android_client_info": {
+          "package_name": "com.example.mundo_kids"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9reS8bl5JQBWFrbIiOqiNt1EpmA2pSfo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,39 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "mundo-kids-ee4e7",
+          "appId": "1:857556637755:android:aa72faa32d2cc98d95a41e",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "mundo-kids-ee4e7",
+          "configurations": {
+            "android": "1:857556637755:android:aa72faa32d2cc98d95a41e",
+            "ios": "1:857556637755:ios:c89b430e897f6f4b95a41e",
+            "macos": "1:857556637755:ios:c89b430e897f6f4b95a41e",
+            "web": "1:857556637755:web:c4ee8ea7f788a05795a41e",
+            "windows": "1:857556637755:web:5dd82122fc4f1ee695a41e"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
