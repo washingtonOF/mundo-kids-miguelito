@@ -809,11 +809,26 @@ class _BatalhaEquipesState extends State<BatalhaEquipes> {
     });
   }
 
+  void _falarFeedbackEquipe() {
+    if (resposta == null || rodada >= totalRodadas) return;
+    final acertou = resposta == perguntas[rodada].correta;
+    final equipe = widget.nomes[rodada % widget.nomes.length];
+    final correta = _textoFalado(
+      perguntas[rodada].alternativas[perguntas[rodada].correta],
+    );
+    _falar(acertou
+        ? (ingles
+            ? 'Well done, team $equipe! Correct answer!'
+            : 'Parabéns, equipe $equipe! Resposta correta!')
+        : (ingles
+            ? 'Not this time, team $equipe. The correct answer is $correta.'
+            : 'Não foi dessa vez, equipe $equipe. A resposta correta é $correta.'));
+  }
+
   void _responder(int indice) {
     if (resposta != null || rodada >= totalRodadas) return;
 
     final acertou = indice == perguntas[rodada].correta;
-    final equipe = widget.nomes[rodada % widget.nomes.length];
 
     setState(() {
       resposta = indice;
@@ -826,11 +841,7 @@ class _BatalhaEquipesState extends State<BatalhaEquipes> {
       }
     });
 
-    _falar(
-      acertou
-          ? (ingles ? 'Well done, team $equipe! Correct answer!' : 'Parabéns, equipe $equipe! Resposta correta!')
-          : (ingles ? 'Not this time, team $equipe. The correct answer is ${_textoFalado(perguntas[rodada].alternativas[perguntas[rodada].correta])}.' : 'Não foi dessa vez, equipe $equipe. A resposta correta é ${_textoFalado(perguntas[rodada].alternativas[perguntas[rodada].correta])}.'),
-    );
+    _falarFeedbackEquipe();
   }
 
   void _proximaRodada() {
@@ -957,6 +968,14 @@ class _BatalhaEquipesState extends State<BatalhaEquipes> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 15),
+                  if (ConfiguracoesJogo.instancia.instrucoesAudio)
+                    TextButton.icon(
+                      onPressed: _falarFeedbackEquipe,
+                      icon: const Icon(Icons.volume_up),
+                      label: Text(ingles
+                          ? 'Hear feedback again'
+                          : 'Ouvir resultado novamente'),
+                    ),
                   FilledButton(
                     onPressed: _proximaRodada,
                     child: Text(
