@@ -192,25 +192,60 @@ class _JogoQuizState extends State<JogoQuiz> {
   bool respondeu = false;
   int? selecionada;
 
-  late final List<Pergunta> perguntas = (() {
+  // As questões originais são classificadas por complexidade pedagógica.
+  // O banco adicional de reconhecimento de categorias é de nível fácil.
+  final Random _sorteio = Random();
+  final List<Pergunta> perguntas = [];
+  final Set<String> _utilizadas = {};
+  int _nivelAdaptativo = 1;
+  int _acertosSeguidos = 0;
+  int _errosSeguidos = 0;
+
+  late final List<List<Pergunta>> _bancoPorNivel = (() {
     final categoria = widget.tipo == 'Português' ? 'portugues' : 'cores';
-    final ingles = ConfiguracoesJogo.instancia.idioma == 'en-US';
+    final idiomaIngles = ConfiguracoesJogo.instancia.idioma == 'en-US';
     final originais = widget.tipo == 'Português'
-        ? (ingles ? perguntasPortuguesIngles : perguntasPortugues)
-        : (ingles ? perguntasCoresIngles : perguntasCores);
-    // O banco adicional ainda não foi localizado; evitar instruções em idioma misturado.
-    final todas = <Pergunta>[
-      ...originais,
-      if (!ingles)
+        ? (idiomaIngles ? perguntasPortuguesIngles : perguntasPortugues)
+        : (idiomaIngles ? perguntasCoresIngles : perguntasCores);
+    final facil = <Pergunta>[
+      ...originais.take(4),
+      if (!idiomaIngles)
         for (final q in banco.questoesExtras[categoria]!)
           Pergunta(q.texto, q.opcoes, q.correta),
-    ]..shuffle(Random());
-    return todas.take(10).toList();
+    ];
+    final medio = originais.skip(4).take(4).toList();
+    final dificil = originais.skip(8).toList();
+    return [facil, medio, dificil];
   })();
+
+  int get _nivelEfetivo => switch (ConfiguracoesJogo.instancia.nivel) {
+    NivelJogo.facil => 1,
+    NivelJogo.medio => 2,
+    NivelJogo.dificil => 3,
+    NivelJogo.adaptativo => _nivelAdaptativo,
+  };
+
+  void _adicionarPergunta() {
+    final nivel = _nivelEfetivo;
+    // Se um nível se esgotar, busca uma questão inédita nos demais.
+    final ordem = nivel == 3 ? [2, 1, 0] :
+        nivel == 2 ? [1, 2, 0] : [0, 1, 2];
+    for (final faixa in ordem) {
+      final disponiveis = _bancoPorNivel[faixa]
+          .where((q) => !_utilizadas.contains(q.texto)).toList();
+      if (disponiveis.isEmpty) continue;
+      final escolhida = disponiveis[_sorteio.nextInt(disponiveis.length)];
+      _utilizadas.add(escolhida.texto);
+      perguntas.add(escolhida);
+      return;
+    }
+    throw StateError('Banco de perguntas esgotado.');
+  }
 
   @override
   void initState() {
     super.initState();
+    _adicionarPergunta();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _falarPergunta();
@@ -316,6 +351,23 @@ class _JogoQuizState extends State<JogoQuiz> {
       selecionada = resposta;
       respondeu = true;
       if (acertou) pontos += 10;
+      if (ConfiguracoesJogo.instancia.nivel == NivelJogo.adaptativo) {
+        if (acertou) {
+          _acertosSeguidos++;
+          _errosSeguidos = 0;
+          if (_acertosSeguidos >= 2 && _nivelAdaptativo < 3) {
+            _nivelAdaptativo++;
+            _acertosSeguidos = 0;
+          }
+        } else {
+          _errosSeguidos++;
+          _acertosSeguidos = 0;
+          if (_errosSeguidos >= 2 && _nivelAdaptativo > 1) {
+            _nivelAdaptativo--;
+            _errosSeguidos = 0;
+          }
+        }
+      }
     });
 
     _falarResultado(acertou);
@@ -323,11 +375,12 @@ class _JogoQuizState extends State<JogoQuiz> {
 
   void _proxima() {
     _versaoVoz++;
-    if (!respondeu || indice >= perguntas.length) return;
+    if (!respondeu || indice >= 10) return;
     setState(() {
       indice++;
       respondeu = false;
       selecionada = null;
+      if (indice < 10) _adicionarPergunta();
     });
 
     if (indice < perguntas.length) {
