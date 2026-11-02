@@ -105,16 +105,23 @@ class _TelaInicialState extends State<TelaInicial> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Text('⭐', style: TextStyle(fontSize: 52)),
-                    const Text(
-                      'MIGUELITO',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 44, fontWeight: FontWeight.w900,
-                        color: Color(0xFFFFC928),
-                        shadows: [
-                          Shadow(color: Color(0xFF143D8B), offset: Offset(2, 3), blurRadius: 3),
-                          Shadow(color: Colors.white, blurRadius: 9),
-                        ],
+                    const SizedBox(
+                      width: double.infinity,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          'MIGUELITO',
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          style: TextStyle(
+                            fontSize: 44, fontWeight: FontWeight.w900,
+                            color: Color(0xFFFFC928),
+                            shadows: [
+                              Shadow(color: Color(0xFF143D8B), offset: Offset(2, 3), blurRadius: 3),
+                              Shadow(color: Colors.white, blurRadius: 9),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 16),
