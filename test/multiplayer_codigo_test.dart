@@ -12,8 +12,8 @@ void main() {
     expect(ServicoMultiplayer.normalizarCodigo(' abc234 '), 'ABC234');
   });
 
-  test('Rejeita códigos curtos, longos, minúsculos ou ambíguos', () {
-    for (final codigo in ['ABC12', 'ABC1234', 'ABO234', 'ABI234', 'ABL234', 'AB0234', '']) {
+  test('Rejeita códigos curtos, longos ou com caracteres ambíguos', () {
+    for (final codigo in ['ABC12', 'ABC1234', 'ABO234', 'ABI234', 'ABL234', 'AB0234', 'ABC 34', 'ABC-34', 'ABC234\nXYZ', '']) {
       expect(
         ServicoMultiplayer.codigoValido(codigo),
         isFalse,
