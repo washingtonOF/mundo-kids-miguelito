@@ -75,3 +75,5 @@ service-account*.json
 /.vscode/
 
 /android/build_apk_log.txt
+
+/android/app/build_apk_log.txt
