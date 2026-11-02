@@ -1,3 +1,4 @@
+import 'configuracoes_jogo.dart';
 import 'banco_conteudo.dart' as banco;
 import 'dart:math';
 import 'dart:async';
@@ -910,6 +911,9 @@ class _TelaCampeonatoMultiplayerState extends State<TelaCampeonatoMultiplayer> {
           final minhas = _mapaFirebase(respostas['$rodada']);
           final respondeu = uid != null && minhas.containsKey(uid);
           final fim = rodada >= perguntas.length;
+           final pontosMinhaResposta = !fim && respondeu
+               ? _pontosResposta(minhas[uid], perguntas[rodada], inicio, rodada, tempo)
+               : 0;
            // Narra o resultado somente após a resposta aparecer no Firebase.
            if (!fim && respondeu && _ultimaRespostaNarrada != rodada) {
              _ultimaRespostaNarrada = rodada;
@@ -980,14 +984,10 @@ class _TelaCampeonatoMultiplayerState extends State<TelaCampeonatoMultiplayer> {
                 if (respondeu) Padding(
                   padding: const EdgeInsets.all(8),
                   child: Text(
-                    '✅ Resposta registrada! '
-                                         '${(() {
-                       final pontos = _pontosResposta(
-                           minhas[uid], perguntas[rodada], inicio, rodada, tempo);
-                       return pontos >= 10
-                           ? 'Acertou! +$pontos pontos (${pontos - 10} de rapidez).'
-                           : 'Não pontuou nesta pergunta.';
-                     })()}',
+                    pontosMinhaResposta >= 10
+                        ? '✅ Resposta registrada! Acertou! +$pontosMinhaResposta pontos '
+                          '(${pontosMinhaResposta - 10} de rapidez).'
+                        : '✅ Resposta registrada! Não pontuou nesta pergunta.',
                     textAlign: TextAlign.center,
                   ),
                 ),
