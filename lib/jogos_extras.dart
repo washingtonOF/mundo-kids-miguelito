@@ -280,22 +280,25 @@ class _JogoQuizState extends State<JogoQuiz> {
   Future<void> _falarResultado(bool acertou) async {
     if (!ConfiguracoesJogo.instancia.instrucoesAudio) return;
 
+    final indiceRespondido = indice;
+    final respostaCorreta = _prepararTexto(perguntas[indiceRespondido].alternativas[perguntas[indiceRespondido].correta]);
     final prefs = await SharedPreferences.getInstance();
-    if (!mounted) return;
+    if (!mounted || indiceRespondido != indice) return;
 
     final nome = prefs.getString('nome_crianca')?.trim() ?? '';
 
     final mensagem = ingles
-        ? (acertou ? 'Great job${nome.isNotEmpty ? ', $nome' : ''}! Correct answer!' : 'Keep trying${nome.isNotEmpty ? ', $nome' : ''}! The correct answer is ${_prepararTexto(perguntas[indice].alternativas[perguntas[indice].correta])}.')
+        ? (acertou ? 'Great job${nome.isNotEmpty ? ', $nome' : ''}! Correct answer!' : 'Keep trying${nome.isNotEmpty ? ', $nome' : ''}! The correct answer is $respostaCorreta.')
         : acertou
         ? 'Parabéns${nome.isNotEmpty ? ', $nome' : ''}! '
               'Você acertou! Muito bem!'
         : 'Não foi dessa vez${nome.isNotEmpty ? ', $nome' : ''}! '
-              'A resposta correta é ${_prepararTexto(perguntas[indice].alternativas[perguntas[indice].correta])}. Continue tentando!';
+              'A resposta correta é $respostaCorreta. Continue tentando!';
 
     await _vozMiguelito.stop();
+    if (!mounted || indiceRespondido != indice) return;
     await VozMiguelito.configurar(_vozMiguelito);
-    if (!mounted) return;
+    if (!mounted || indiceRespondido != indice) return;
     await _vozMiguelito.speak(mensagem);
   }
 
