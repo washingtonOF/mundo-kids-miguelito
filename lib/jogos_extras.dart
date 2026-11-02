@@ -292,7 +292,7 @@ class _JogoQuizState extends State<JogoQuiz> {
 
     final prefs = await SharedPreferences.getInstance();
 
-    if (!mounted || indiceAtual != indice || respondeu) return;
+    if (!mounted || indiceAtual != indice || respondeu || versao != _versaoVoz) return;
 
     final nome = prefs.getString('nome_crianca')?.trim() ?? '';
 
@@ -307,13 +307,18 @@ class _JogoQuizState extends State<JogoQuiz> {
         '${_prepararTexto(pergunta.texto)} '
         '$alternativas';
 
-    await _vozMiguelito.stop();
-    await VozMiguelito.configurar(_vozMiguelito);
-
     if (!mounted || indiceAtual != indice || respondeu ||
         versao != _versaoVoz || !ConfiguracoesJogo.instancia.instrucoesAudio) return;
-
-    await _vozMiguelito.speak(mensagem);
+    try {
+      await _vozMiguelito.stop();
+      if (!mounted || versao != _versaoVoz) return;
+      await VozMiguelito.configurar(_vozMiguelito);
+      if (!mounted || indiceAtual != indice || respondeu ||
+          versao != _versaoVoz || !ConfiguracoesJogo.instancia.instrucoesAudio) return;
+      await _vozMiguelito.speak(mensagem);
+    } catch (erro) {
+      debugPrint('Miguelito: falha ao narrar pergunta: $erro');
+    }
   }
 
   Future<void> _falarResultado(bool acertou) async {
@@ -323,7 +328,7 @@ class _JogoQuizState extends State<JogoQuiz> {
     final versao = ++_versaoVoz;
     final respostaCorreta = _prepararTexto(perguntas[indiceRespondido].alternativas[perguntas[indiceRespondido].correta]);
     final prefs = await SharedPreferences.getInstance();
-    if (!mounted || indiceRespondido != indice) return;
+    if (!mounted || indiceRespondido != indice || versao != _versaoVoz) return;
 
     final nome = prefs.getString('nome_crianca')?.trim() ?? '';
 
@@ -335,11 +340,18 @@ class _JogoQuizState extends State<JogoQuiz> {
         : 'Não foi dessa vez${nome.isNotEmpty ? ', $nome' : ''}! '
               'A resposta correta é $respostaCorreta. Continue tentando!';
 
-    await _vozMiguelito.stop();
-    if (!mounted || indiceRespondido != indice) return;
-    await VozMiguelito.configurar(_vozMiguelito);
-    if (!mounted || indiceRespondido != indice) return;
-    await _vozMiguelito.speak(mensagem);
+    if (!mounted || indiceRespondido != indice ||
+        versao != _versaoVoz || !ConfiguracoesJogo.instancia.instrucoesAudio) return;
+    try {
+      await _vozMiguelito.stop();
+      if (!mounted || versao != _versaoVoz) return;
+      await VozMiguelito.configurar(_vozMiguelito);
+      if (!mounted || indiceRespondido != indice ||
+          versao != _versaoVoz || !ConfiguracoesJogo.instancia.instrucoesAudio) return;
+      await _vozMiguelito.speak(mensagem);
+    } catch (erro) {
+      debugPrint('Miguelito: falha ao narrar resultado: $erro');
+    }
   }
 
   void _responder(int resposta) {
