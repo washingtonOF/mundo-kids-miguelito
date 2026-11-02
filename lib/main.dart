@@ -61,8 +61,26 @@ class MundoKidsApp extends StatelessWidget {
   }
 }
 
-class TelaInicial extends StatelessWidget {
+class TelaInicial extends StatefulWidget {
   const TelaInicial({super.key});
+
+  @override
+  State<TelaInicial> createState() => _TelaInicialState();
+}
+
+class _TelaInicialState extends State<TelaInicial> {
+  String _idioma = 'pt-BR';
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarIdioma();
+  }
+
+  Future<void> _carregarIdioma() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) setState(() => _idioma = prefs.getString('idioma_miguelito') ?? 'pt-BR');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,11 +128,11 @@ class TelaInicial extends StatelessWidget {
                       ),
                       child: Column(
                         children: [
-                          const Text('🌟 Sua aventura vai começar!',
+                          Text(_idioma == 'pt-BR' ? '🌟 Sua aventura vai começar!' : '🌟 Your adventure is about to begin!',
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Color(0xFF31235B))),
                           const SizedBox(height: 12),
-                          const Text('Aprenda, jogue e divirta-se com o Miguelito!',
+                          Text(_idioma == 'pt-BR' ? 'Aprenda, jogue e divirta-se com o Miguelito!' : 'Learn, play and have fun with Miguelito!',
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 18, color: Color(0xFF31235B))),
                           const SizedBox(height: 24),
@@ -124,7 +142,7 @@ class TelaInicial extends StatelessWidget {
                               onPressed: () => Navigator.push(context,
                                 MaterialPageRoute(builder: (_) => const TelaModoJogo())),
                               icon: const Icon(Icons.sports_esports),
-                              label: const Text('COMEÇAR A JOGAR'),
+                              label: Text(_idioma == 'pt-BR' ? 'COMEÇAR A JOGAR' : 'START PLAYING'),
                               style: FilledButton.styleFrom(
                                 backgroundColor: const Color(0xFF19AF44),
                                 foregroundColor: Colors.white,
@@ -139,7 +157,7 @@ class TelaInicial extends StatelessWidget {
                     ),
                     const SizedBox(height: 14),
                     IconButton(
-                      tooltip: 'Configurações',
+                      tooltip: _idioma == 'pt-BR' ? 'Configurações' : 'Settings',
                       onPressed: () => Navigator.push(context,
                         MaterialPageRoute(builder: (_) => const TelaConfiguracoes())),
                       icon: const Icon(Icons.settings, color: Color(0xFF31235B), size: 32),
