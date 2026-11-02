@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'banco_conteudo.dart' as banco;
 import 'dart:math';
 
@@ -448,6 +449,7 @@ class JogoMemoria extends StatefulWidget {
 
 class _JogoMemoriaState extends State<JogoMemoria> {
   final FlutterTts _vozMemoria = FlutterTts();
+  Timer? _ocultarCartasTimer;
   bool get ingles => ConfiguracoesJogo.instancia.idioma == 'en-US';
 
   final Map<String, String> nomesAnimais = {
@@ -494,6 +496,7 @@ class _JogoMemoriaState extends State<JogoMemoria> {
 
   @override
   void dispose() {
+    _ocultarCartasTimer?.cancel();
     _vozMemoria.stop();
     super.dispose();
   }
@@ -537,7 +540,10 @@ class _JogoMemoriaState extends State<JogoMemoria> {
           : (ingles ? 'These cards are different. Keep trying!' : 'Essas cartas são diferentes. Continue tentando!'),
     );
 
-    Future.delayed(const Duration(milliseconds: 850), () {
+    _ocultarCartasTimer?.cancel();
+    _ocultarCartasTimer = Timer(
+      Duration(milliseconds: ConfiguracoesJogo.instancia.modoTranquilo ? 1600 : 850),
+      () {
       if (!mounted) return;
 
       setState(() {
@@ -558,11 +564,13 @@ class _JogoMemoriaState extends State<JogoMemoria> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: Text(ingles ? '🧠 Memory Game' : '🧠 Jogo da Memória')),
-    body: Center(
+    body: SafeArea(
+      child: Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 550),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        child: ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
           children: [
             Text(
               achadas.length == cartas.length
@@ -581,14 +589,20 @@ class _JogoMemoriaState extends State<JogoMemoria> {
             const SizedBox(height: 20),
             GridView.builder(
               shrinkWrap: true,
-              padding: const EdgeInsets.all(16),
+              physics: const NeverScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(12),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
               ),
               itemCount: cartas.length,
-              itemBuilder: (_, i) => InkWell(
+              itemBuilder: (_, i) => Semantics(
+                button: true,
+                label: achadas.contains(i)
+                    ? (ingles ? 'Pair found' : 'Par encontrado')
+                    : (ingles ? 'Card ${i + 1}' : 'Carta ${i + 1}'),
+                child: InkWell(
                 onTap: () => escolher(i),
                 child: Card(
                   color: achadas.contains(i)
@@ -603,6 +617,7 @@ class _JogoMemoriaState extends State<JogoMemoria> {
                     ),
                   ),
                 ),
+                ),
               ),
             ),
             if (achadas.length == cartas.length)
@@ -615,6 +630,7 @@ class _JogoMemoriaState extends State<JogoMemoria> {
               ),
           ],
         ),
+      ),
       ),
     ),
   );
