@@ -762,11 +762,17 @@ class _TelaCampeonatoMultiplayerState extends State<TelaCampeonatoMultiplayer> {
   int _ultimaRespostaNarrada = -1;
   bool _vozAtiva = true;
 
+  int _sequenciaNarracao = 0;
+
   Future<void> _falar(String mensagem) async {
     if (!mounted || !_vozAtiva || !VozMiguelito.habilitada) return;
+    final sequencia = ++_sequenciaNarracao;
     try {
       await _voz.stop();
-      if (mounted && _vozAtiva) await _voz.speak(mensagem);
+      if (!mounted || !_vozAtiva || sequencia != _sequenciaNarracao) return;
+      await VozMiguelito.configurar(_voz);
+      if (!mounted || !_vozAtiva || sequencia != _sequenciaNarracao) return;
+      await _voz.speak(mensagem);
     } catch (erro) {
       debugPrint('MUNDO_KIDS falha na narração: $erro');
     }
@@ -777,10 +783,15 @@ class _TelaCampeonatoMultiplayerState extends State<TelaCampeonatoMultiplayer> {
   }
 
   Future<void> _narrarResultado(int pontos) async {
+    final ingles = ConfiguracoesJogo.instancia.idioma == 'en-US';
     if (pontos >= 10) {
-      await _falar('Muito bem! Você acertou e ganhou $pontos pontos!');
+      await _falar(ingles
+          ? 'Well done! You got it right and earned $pontos points!'
+          : 'Muito bem! Você acertou e ganhou $pontos pontos!');
     } else {
-      await _falar('Não foi dessa vez. Continue tentando, você consegue!');
+      await _falar(ingles
+          ? 'Not this time. Keep trying, you can do it!'
+          : 'Não foi dessa vez. Continue tentando, você consegue!');
     }
   }
   @override
@@ -794,6 +805,8 @@ class _TelaCampeonatoMultiplayerState extends State<TelaCampeonatoMultiplayer> {
   @override
   void dispose() {
     _relogio?.cancel();
+    _sequenciaNarracao++;
+    _vozAtiva = false;
     _voz.stop();
     super.dispose();
   }
