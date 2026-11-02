@@ -183,7 +183,7 @@ class TelaModoJogo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('🎮 Como vamos jogar?'),
+        title: Text(ConfiguracoesJogo.instancia.idioma == 'pt-BR' ? '🎮 Como vamos jogar?' : '🎮 How shall we play?'),
         backgroundColor: Colors.white.withValues(alpha: 0.88),
       ),
       body: Container(
@@ -210,8 +210,8 @@ class TelaModoJogo extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text(
-                        'Escolha como quer se divertir!',
+                      Text(
+                        ConfiguracoesJogo.instancia.idioma == 'pt-BR' ? 'Escolha como quer se divertir!' : 'Choose how you want to play!',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 25,
@@ -220,8 +220,8 @@ class TelaModoJogo extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      const Text(
-                        'O Miguelito está pronto para a aventura!',
+                      Text(
+                        ConfiguracoesJogo.instancia.idioma == 'pt-BR' ? 'O Miguelito está pronto para a aventura!' : 'Miguelito is ready for adventure!',
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 16),
                       ),
@@ -229,16 +229,16 @@ class TelaModoJogo extends StatelessWidget {
                       _opcao(
                         context: context,
                         emoji: '👤',
-                        titulo: 'JOGAR SOZINHO',
-                        descricao: 'Escolha uma matéria e aprenda no seu ritmo.',
+                        titulo: ConfiguracoesJogo.instancia.idioma == 'pt-BR' ? 'JOGAR SOZINHO' : 'PLAY SOLO',
+                        descricao: ConfiguracoesJogo.instancia.idioma == 'pt-BR' ? 'Escolha uma matéria e aprenda no seu ritmo.' : 'Choose a subject and learn at your own pace.',
                         destino: const TelaJogos(),
                       ),
                       const SizedBox(height: 14),
                       _opcao(
                         context: context,
                         emoji: '👥',
-                        titulo: 'JOGAR EM EQUIPE',
-                        descricao: 'Crie uma sala ou entre com o código dos amigos.',
+                        titulo: ConfiguracoesJogo.instancia.idioma == 'pt-BR' ? 'JOGAR EM EQUIPE' : 'PLAY WITH FRIENDS',
+                        descricao: ConfiguracoesJogo.instancia.idioma == 'pt-BR' ? 'Crie uma sala ou entre com o código dos amigos.' : 'Create a room or join with a friend code.',
                         destino: const TelaMultiplayerOnline(),
                       ),
                     ],
@@ -538,7 +538,6 @@ class _TelaMatematicaState extends State<TelaMatematica> {
         : 'Vamos lá! $pergunta $alternativas';
 
     await _vozMiguelito.stop();
-    await _vozMiguelito.setLanguage('pt-BR');
     await VozMiguelito.configurar(_vozMiguelito);
 
     if (!mounted || indiceAtual != _indice || _selecionada != null) return;
