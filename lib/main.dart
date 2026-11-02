@@ -516,17 +516,18 @@ class _TelaMatematicaState extends State<TelaMatematica> {
     final indiceAtual = _indice;
     final perguntaAtual = _perguntas[indiceAtual];
 
+    final ingles = ConfiguracoesJogo.instancia.idioma == 'en-US';
     final pergunta = perguntaAtual.enunciado
-        .replaceAll('+', ' mais ')
-        .replaceAll('-', ' menos ')
-        .replaceAll('×', ' vezes ')
-        .replaceAll('÷', ' dividido por ')
-        .replaceAll('=', ' é igual a ');
+        .replaceAll('+', ingles ? ' plus ' : ' mais ')
+        .replaceAll('-', ingles ? ' minus ' : ' menos ')
+        .replaceAll('×', ingles ? ' times ' : ' vezes ')
+        .replaceAll('÷', ingles ? ' divided by ' : ' dividido por ')
+        .replaceAll('=', ingles ? ' equals ' : ' é igual a ');
 
     final alternativas = perguntaAtual.alternativas
         .asMap()
         .entries
-        .map((item) => 'Opção ${String.fromCharCode(65 + item.key)}: ${item.value}.')
+        .map((item) => '${ingles ? 'Option' : 'Opção'} ${String.fromCharCode(65 + item.key)}: ${item.value}.')
         .join(' ');
 
     final prefs = await SharedPreferences.getInstance();
@@ -535,8 +536,8 @@ class _TelaMatematicaState extends State<TelaMatematica> {
     final nome = prefs.getString('nome_crianca')?.trim() ?? '';
 
     final mensagem = nome.isNotEmpty
-        ? '$nome, vamos lá! $pergunta $alternativas'
-        : 'Vamos lá! $pergunta $alternativas';
+        ? '$nome, ${ingles ? 'let’s go!' : 'vamos lá!'} $pergunta $alternativas'
+        : '${ingles ? 'Let’s go!' : 'Vamos lá!'} $pergunta $alternativas';
 
     await _vozMiguelito.stop();
     await VozMiguelito.configurar(_vozMiguelito);
