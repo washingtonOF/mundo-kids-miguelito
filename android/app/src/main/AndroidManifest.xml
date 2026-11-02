@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Necessária para autenticação e partidas online via Firebase. -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:label="Miguelito"
         android:name="${applicationName}"
