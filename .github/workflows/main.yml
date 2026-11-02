@@ -65,6 +65,12 @@ jobs:
           APKSIGNER=$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -n 1)
           test -n "$APKSIGNER" || { echo "::error::apksigner não encontrado no Android SDK."; exit 1; }
           "$APKSIGNER" verify --verbose "$APK"
+          AAPT=$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -n 1)
+          test -n "$AAPT" || { echo "::error::aapt não encontrado no Android SDK."; exit 1; }
+          INFO=$("$AAPT" dump badging "$APK")
+          echo "$INFO" | grep -q "name='com.example.mundo_kids'" || { echo "::error::Identificador Android inesperado."; exit 1; }
+          echo "$INFO" | grep -q "versionName='1.1.0'" || { echo "::error::Versão do APK diferente de 1.1.0."; exit 1; }
+          echo "$INFO" | grep -q "versionCode='2'" || { echo "::error::Código de versão diferente de 2."; exit 1; }
 
       - name: Disponibilizar APK
         uses: actions/upload-artifact@v4
