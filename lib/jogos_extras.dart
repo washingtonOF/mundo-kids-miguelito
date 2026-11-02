@@ -13,16 +13,18 @@ import 'configuracoes_jogo.dart';
 class JogosExtras extends StatelessWidget {
   const JogosExtras({super.key});
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('⭐ Mais aventuras')),
+  Widget build(BuildContext context) {
+    final ingles = ConfiguracoesJogo.instancia.idioma == 'en-US';
+    return Scaffold(
+    appBar: AppBar(title: Text(ingles ? '⭐ More adventures' : '⭐ Mais aventuras')),
     body: ListView(
       padding: const EdgeInsets.all(20),
       children: [
         for (final item in [
-          ('🔤 Português', const JogoQuiz(tipo: 'Português')),
-          ('🧠 Memória', const JogoMemoria()),
-          ('🎨 Cores e formas', const JogoQuiz(tipo: 'Cores e formas')),
-          ('🏆 Batalha de equipes', const ConfigurarEquipes()),
+          (ingles ? '🔤 Portuguese' : '🔤 Português', const JogoQuiz(tipo: 'Português')),
+          (ingles ? '🧠 Memory' : '🧠 Memória', const JogoMemoria()),
+          (ingles ? '🎨 Colors and shapes' : '🎨 Cores e formas', const JogoQuiz(tipo: 'Cores e formas')),
+          (ingles ? '🏆 Team battle' : '🏆 Batalha de equipes', const ConfigurarEquipes()),
         ])
           Card(
             child: ListTile(
@@ -37,6 +39,7 @@ class JogosExtras extends StatelessWidget {
       ],
     ),
   );
+  }
 }
 
 class Pergunta {
