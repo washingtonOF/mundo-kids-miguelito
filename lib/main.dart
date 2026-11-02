@@ -708,20 +708,24 @@ class _TelaMatematicaState extends State<TelaMatematica> {
 
       if (acertou) {
         _pontos += 10;
-        _acertosConsecutivos++;
-        _errosConsecutivos = 0;
+      }
 
-        if (_acertosConsecutivos >= 2 && _dificuldadeAdaptativa < 3) {
-          _dificuldadeAdaptativa++;
-          _acertosConsecutivos = 0;
-        }
-      } else {
-        _errosConsecutivos++;
-        _acertosConsecutivos = 0;
-
-        if (_errosConsecutivos >= 2 && _dificuldadeAdaptativa > 1) {
-          _dificuldadeAdaptativa--;
+      // Ajustes automáticos só são aplicados no modo Adaptativo.
+      if (ConfiguracoesJogo.instancia.nivel == NivelJogo.adaptativo) {
+        if (acertou) {
+          _acertosConsecutivos++;
           _errosConsecutivos = 0;
+          if (_acertosConsecutivos >= 2 && _dificuldadeAdaptativa < 3) {
+            _dificuldadeAdaptativa++;
+            _acertosConsecutivos = 0;
+          }
+        } else {
+          _errosConsecutivos++;
+          _acertosConsecutivos = 0;
+          if (_errosConsecutivos >= 2 && _dificuldadeAdaptativa > 1) {
+            _dificuldadeAdaptativa--;
+            _errosConsecutivos = 0;
+          }
         }
       }
     });
