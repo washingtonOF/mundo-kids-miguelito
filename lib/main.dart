@@ -1,3 +1,8 @@
+// Miguelito — em desenvolvimento.
+// Propriedade: Washington Santos de Souza - IsamigShop.
+// Uma homenagem ao meu filho amado, Lucas Miguel.
+// Mensagem reservada ao código-fonte; não exibir na interface.
+
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -37,7 +42,7 @@ class MundoKidsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Mundo Kids',
+      title: 'Miguelito',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
@@ -1027,7 +1032,7 @@ class _TelaIdentificacaoState extends State<TelaIdentificacao> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text(
-                    '🎮 Bem-vindo ao Mundo Kids!',
+                    '🎮 Bem-vindo ao Miguelito!',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                   ),
