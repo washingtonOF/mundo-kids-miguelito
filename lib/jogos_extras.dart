@@ -143,6 +143,8 @@ class JogoQuiz extends StatefulWidget {
 class _JogoQuizState extends State<JogoQuiz> {
   final FlutterTts _vozMiguelito = FlutterTts();
 
+  bool get ingles => ConfiguracoesJogo.instancia.idioma == 'en-US';
+
   int indice = 0;
   int pontos = 0;
   bool respondeu = false;
@@ -197,16 +199,15 @@ class _JogoQuizState extends State<JogoQuiz> {
     final alternativas = pergunta.alternativas
         .asMap()
         .entries
-        .map((item) => 'Opção ${String.fromCharCode(65 + item.key)}: ${_prepararTexto(item.value)}.')
+        .map((item) => '${ingles ? 'Option' : 'Opção'} ${String.fromCharCode(65 + item.key)}: ${_prepararTexto(item.value)}.')
         .join(' ');
 
     final mensagem =
-        '${nome.isNotEmpty ? '$nome, vamos lá! ' : 'Vamos lá! '}'
+        '${nome.isNotEmpty ? '$nome, ' : ''}${ingles ? 'Let’s go! ' : 'Vamos lá! '}'
         '${_prepararTexto(pergunta.texto)} '
         '$alternativas';
 
     await _vozMiguelito.stop();
-    await _vozMiguelito.setLanguage('pt-BR');
     await VozMiguelito.configurar(_vozMiguelito);
 
     if (!mounted || indiceAtual != indice || respondeu) return;
@@ -222,14 +223,15 @@ class _JogoQuizState extends State<JogoQuiz> {
 
     final nome = prefs.getString('nome_crianca')?.trim() ?? '';
 
-    final mensagem = acertou
+    final mensagem = ingles
+        ? (acertou ? 'Great job${nome.isNotEmpty ? ', $nome' : ''}! Correct answer!' : 'Keep trying${nome.isNotEmpty ? ', $nome' : ''}! The correct answer is ${perguntas[indice].alternativas[perguntas[indice].correta]}.')
+        : acertou
         ? 'Parabéns${nome.isNotEmpty ? ', $nome' : ''}! '
               'Você acertou! Muito bem!'
         : 'Não foi dessa vez${nome.isNotEmpty ? ', $nome' : ''}! '
               'A resposta correta é ${_prepararTexto(perguntas[indice].alternativas[perguntas[indice].correta])}. Continue tentando!';
 
     await _vozMiguelito.stop();
-    await _vozMiguelito.setLanguage('pt-BR');
     await VozMiguelito.configurar(_vozMiguelito);
     if (!mounted) return;
     await _vozMiguelito.speak(mensagem);
@@ -275,19 +277,19 @@ class _JogoQuizState extends State<JogoQuiz> {
   Widget build(BuildContext context) {
     if (indice >= perguntas.length) {
       return Scaffold(
-        appBar: AppBar(title: const Text('🏆 Resultado')),
+        appBar: AppBar(title: Text(ingles ? '🏆 Results' : '🏆 Resultado')),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                '🎉 Você fez $pontos pontos!',
+                ingles ? '🎉 You earned $pontos points!' : '🎉 Você fez $pontos pontos!',
                 style: const TextStyle(fontSize: 26),
               ),
               const SizedBox(height: 20),
               FilledButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Voltar aos jogos'),
+                child: Text(ingles ? 'Back to games' : 'Voltar aos jogos'),
               ),
             ],
           ),
@@ -299,7 +301,7 @@ class _JogoQuizState extends State<JogoQuiz> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFF8E5),
-      appBar: AppBar(title: Text(widget.tipo)),
+      appBar: AppBar(title: Text(ingles ? (widget.tipo == 'Português' ? 'Portuguese' : 'Colors and shapes') : widget.tipo)),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 650),
@@ -309,8 +311,7 @@ class _JogoQuizState extends State<JogoQuiz> {
               LinearProgressIndicator(value: (indice + 1) / perguntas.length),
               const SizedBox(height: 20),
               Text(
-                'Questão ${indice + 1}/${perguntas.length}'
-                '   ⭐ $pontos pontos',
+                ingles ? 'Question ${indice + 1}/${perguntas.length}   ⭐ $pontos points' : 'Questão ${indice + 1}/${perguntas.length}   ⭐ $pontos pontos',
                 style: const TextStyle(fontSize: 18),
               ),
               const SizedBox(height: 25),
@@ -328,7 +329,7 @@ class _JogoQuizState extends State<JogoQuiz> {
                   child: FilledButton.icon(
                     onPressed: respondeu ? null : _falarPergunta,
                     icon: const Icon(Icons.volume_up),
-                    label: const Text('Ouvir pergunta e alternativas'),
+                    label: Text(ingles ? 'Listen to question and answers' : 'Ouvir pergunta e alternativas'),
                   ),
                 ),
               const SizedBox(height: 25),
@@ -349,15 +350,15 @@ class _JogoQuizState extends State<JogoQuiz> {
               if (respondeu) ...[
                 Text(
                   selecionada == p.correta
-                      ? '🎉 Muito bem! +10 pontos'
-                      : '💡 Resposta: ${p.alternativas[p.correta]}',
+                      ? (ingles ? '🎉 Well done! +10 points' : '🎉 Muito bem! +10 pontos')
+                      : (ingles ? '💡 Answer: ${p.alternativas[p.correta]}' : '💡 Resposta: ${p.alternativas[p.correta]}'),
                   textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: 19),
                 ),
                 const SizedBox(height: 15),
                 FilledButton(
                   onPressed: _proxima,
-                  child: const Text('Próxima pergunta'),
+                  child: Text(ingles ? 'Next question' : 'Próxima pergunta'),
                 ),
               ],
             ],
