@@ -771,14 +771,21 @@ class _BatalhaEquipesState extends State<BatalhaEquipes> {
         .replaceAll(' - ', ' menos ');
   }
 
+  int _versaoNarracao = 0;
+
   Future<void> _falar(String texto) async {
     if (!ConfiguracoesJogo.instancia.instrucoesAudio || !mounted) return;
-
-    await _voz.stop();
-    await VozMiguelito.configurar(_voz);
-
-    if (!mounted) return;
-    await _voz.speak(texto);
+    final versao = ++_versaoNarracao;
+    try {
+      await _voz.stop();
+      if (!mounted || versao != _versaoNarracao) return;
+      await VozMiguelito.configurar(_voz);
+      if (!mounted || versao != _versaoNarracao ||
+          !ConfiguracoesJogo.instancia.instrucoesAudio) return;
+      await _voz.speak(texto);
+    } catch (erro) {
+      debugPrint('Miguelito: falha na voz de equipes: $erro');
+    }
   }
 
   void _falarRodada() {
@@ -874,6 +881,7 @@ class _BatalhaEquipesState extends State<BatalhaEquipes> {
 
   @override
   void dispose() {
+    _versaoNarracao++;
     _voz.stop();
     super.dispose();
   }
