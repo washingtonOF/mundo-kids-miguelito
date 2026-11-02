@@ -71,6 +71,83 @@ class MundoKidsApp extends StatelessWidget {
   }
 }
 
+/// Mascote vetorial independente de arquivos externos: aparece também offline.
+class AvatarMiguelito extends StatelessWidget {
+  final double tamanho;
+  const AvatarMiguelito({super.key, this.tamanho = 220});
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    label: ConfiguracoesJogo.instancia.idioma == 'en-US'
+        ? 'Miguelito, the friendly yellow mascot'
+        : 'Miguelito, o mascote amarelo e sorridente',
+    image: true,
+    child: SizedBox(
+      width: tamanho,
+      height: tamanho,
+      child: CustomPaint(painter: _PintorMiguelito()),
+    ),
+  );
+}
+
+class _PintorMiguelito extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.save();
+    canvas.scale(size.width / 220, size.height / 220);
+    final amarelo = Paint()..color = const Color(0xFFFFD332);
+    final azul = Paint()..color = const Color(0xFF1765D1);
+    final escuro = Paint()..color = const Color(0xFF372510);
+    final branco = Paint()..color = Colors.white;
+    void oval(Rect r, Paint p) => canvas.drawOval(r, p);
+    void rr(Rect r, double rad, Paint p) => canvas.drawRRect(
+        RRect.fromRectAndRadius(r, Radius.circular(rad)), p);
+    // Corpo, braços, pernas e tênis.
+    rr(const Rect.fromLTWH(76, 142, 69, 53), 17, azul);
+    rr(const Rect.fromLTWH(81, 187, 23, 22), 10, amarelo);
+    rr(const Rect.fromLTWH(118, 187, 23, 22), 10, amarelo);
+    oval(const Rect.fromLTWH(68, 201, 42, 15), azul);
+    oval(const Rect.fromLTWH(114, 201, 42, 15), azul);
+    rr(const Rect.fromLTWH(59, 147, 23, 42), 12, amarelo);
+    rr(const Rect.fromLTWH(139, 147, 23, 42), 12, amarelo);
+    // Cabeça, orelhas e cabelo.
+    oval(const Rect.fromLTWH(30, 79, 35, 39), amarelo);
+    oval(const Rect.fromLTWH(155, 79, 35, 39), amarelo);
+    oval(const Rect.fromLTWH(44, 27, 132, 136), amarelo);
+    for (final r in [
+      const Rect.fromLTWH(56, 18, 45, 35),
+      const Rect.fromLTWH(88, 11, 48, 42),
+      const Rect.fromLTWH(124, 22, 40, 34),
+    ]) { oval(r, amarelo); }
+    // Olhos grandes e sorriso.
+    oval(const Rect.fromLTWH(72, 84, 29, 37), branco);
+    oval(const Rect.fromLTWH(120, 84, 29, 37), branco);
+    oval(const Rect.fromLTWH(84, 96, 12, 19), escuro);
+    oval(const Rect.fromLTWH(126, 96, 12, 19), escuro);
+    oval(const Rect.fromLTWH(89, 98, 4, 6), branco);
+    oval(const Rect.fromLTWH(131, 98, 4, 6), branco);
+    final sorriso = Path()
+      ..moveTo(91, 129)
+      ..quadraticBezierTo(110, 151, 132, 129);
+    canvas.drawPath(sorriso, Paint()
+      ..color = escuro.color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 5
+      ..strokeCap = StrokeCap.round);
+    // Letra M na camiseta.
+    final texto = TextPainter(
+      text: const TextSpan(text: 'M', style: TextStyle(
+        color: Colors.white, fontSize: 31, fontWeight: FontWeight.w900)),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    texto.paint(canvas, const Offset(97, 150));
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
 class TelaInicial extends StatefulWidget {
   const TelaInicial({super.key});
 
@@ -104,7 +181,7 @@ class _TelaInicialState extends State<TelaInicial> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text('⭐', style: TextStyle(fontSize: 52)),
+                    const AvatarMiguelito(tamanho: 240),
                     const SizedBox(
                       width: double.infinity,
                       child: FittedBox(
@@ -123,6 +200,16 @@ class _TelaInicialState extends State<TelaInicial> {
                           ),
                         ),
                       ),
+                    ),
+                    const SizedBox(height: 12),
+                    SegmentedButton<String>(
+                      segments: const [
+                        ButtonSegment(value: 'pt-BR', label: Text('🇧🇷 Português')),
+                        ButtonSegment(value: 'en-US', label: Text('🇺🇸 English')),
+                      ],
+                      selected: {_idioma},
+                      onSelectionChanged: (idiomas) =>
+                          ConfiguracoesJogo.instancia.alterarIdioma(idiomas.first),
                     ),
                     const SizedBox(height: 16),
                     Container(
@@ -1106,7 +1193,9 @@ class _TelaIdentificacaoState extends State<TelaIdentificacao> {
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
+                  const AvatarMiguelito(tamanho: 205),
+                  const SizedBox(height: 12),
                   Text(
                     _idioma == 'pt-BR' ? 'Olá! Eu sou o Miguelito!\nComo você se chama?' : 'Hi! I am Miguelito!\nWhat is your name?',
                     textAlign: TextAlign.center,
