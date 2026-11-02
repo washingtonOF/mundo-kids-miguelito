@@ -380,6 +380,19 @@ class _JogoQuizState extends State<JogoQuiz> {
           child: ListView(
             padding: const EdgeInsets.all(20),
             children: [
+              if (ConfiguracoesJogo.instancia.instrucoesAudio)
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton.icon(
+                    onPressed: respondeu
+                        ? () => _falarResultado(selecionada == perguntas[indice].correta)
+                        : _falarPergunta,
+                    icon: const Icon(Icons.volume_up),
+                    label: Text(ingles
+                        ? (respondeu ? 'Hear feedback again' : 'Hear question and options')
+                        : (respondeu ? 'Ouvir resultado novamente' : 'Ouvir pergunta e alternativas')),
+                  ),
+                ),
               LinearProgressIndicator(value: (indice + 1) / perguntas.length),
               const SizedBox(height: 20),
               Text(
