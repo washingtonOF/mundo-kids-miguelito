@@ -67,25 +67,6 @@ class TelaInicial extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        actions: [
-          IconButton(
-            tooltip: 'Configurações',
-            icon: const Icon(
-              Icons.settings,
-              color: Colors.deepPurple,
-              size: 30,
-            ),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const TelaConfiguracoes()),
-            ),
-          ),
-        ],
-      ),
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -97,55 +78,74 @@ class TelaInicial extends StatelessWidget {
         ),
         child: SafeArea(
           child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    '🌟 Sua aventura vai começar!',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF31235B),
-                      shadows: [Shadow(color: Colors.white, blurRadius: 8)],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: 420),
-                    child: Text(
-                      'Clique no botão abaixo para explorar nossos jogos, aprender e se divertir com o Miguelito!',
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 18),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 470),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('⭐', style: TextStyle(fontSize: 52)),
+                    const Text(
+                      'MIGUELITO',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFF31235B),
-                        shadows: [Shadow(color: Colors.white, blurRadius: 8)],
+                        fontSize: 44, fontWeight: FontWeight.w900,
+                        color: Color(0xFFFFC928),
+                        shadows: [
+                          Shadow(color: Color(0xFF143D8B), offset: Offset(2, 3), blurRadius: 3),
+                          Shadow(color: Colors.white, blurRadius: 9),
+                        ],
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  FilledButton.icon(
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const TelaModoJogo()),
-                    ),
-                    icon: const Icon(Icons.sports_esports),
-                    label: const Text('COMEÇAR A JOGAR'),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xFF39C878),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 30,
-                        vertical: 20,
+                    const SizedBox(height: 16),
+                    Container(
+                      padding: const EdgeInsets.all(22),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.94),
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: [
+                          BoxShadow(color: Colors.black.withValues(alpha: 0.12), blurRadius: 18),
+                        ],
                       ),
-                      textStyle: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                      child: Column(
+                        children: [
+                          const Text('🌟 Sua aventura vai começar!',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Color(0xFF31235B))),
+                          const SizedBox(height: 12),
+                          const Text('Aprenda, jogue e divirta-se com o Miguelito!',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 18, color: Color(0xFF31235B))),
+                          const SizedBox(height: 24),
+                          SizedBox(
+                            width: double.infinity,
+                            child: FilledButton.icon(
+                              onPressed: () => Navigator.push(context,
+                                MaterialPageRoute(builder: (_) => const TelaModoJogo())),
+                              icon: const Icon(Icons.sports_esports),
+                              label: const Text('COMEÇAR A JOGAR'),
+                              style: FilledButton.styleFrom(
+                                backgroundColor: const Color(0xFF19AF44),
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(vertical: 19),
+                                textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 14),
+                    IconButton(
+                      tooltip: 'Configurações',
+                      onPressed: () => Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => const TelaConfiguracoes())),
+                      icon: const Icon(Icons.settings, color: Color(0xFF31235B), size: 32),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -1032,7 +1032,7 @@ class _TelaIdentificacaoState extends State<TelaIdentificacao> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text(
-                    '🎮 Bem-vindo ao Miguelito!',
+                    '🌟 Olá! Bem-vindo ao Miguelito!',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                   ),
