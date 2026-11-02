@@ -125,6 +125,20 @@ const perguntasCores = [
     'Laranja',
   ], 1),
 ];
+// Banco em inglês para a atividade visual; respostas mantêm os mesmos índices.
+const perguntasCoresIngles = [
+  Pergunta('🔴 What color is this?', ['Blue', 'Green', 'Red', 'Yellow'], 2),
+  Pergunta('🔺 What shape is this?', ['Circle', 'Square', 'Triangle', 'Rectangle'], 2),
+  Pergunta('🔵 What color is this?', ['Blue', 'Pink', 'Orange', 'Purple'], 0),
+  Pergunta('⬛ How many sides does a square have?', ['2', '3', '4', '5'], 2),
+  Pergunta('🟡 What color is this?', ['Green', 'Yellow', 'Black', 'Blue'], 1),
+  Pergunta('⚪ Which shape has no straight sides?', ['Triangle', 'Square', 'Circle', 'Rectangle'], 2),
+  Pergunta('🔴 + 🟡: mixing red and yellow makes...', ['Green', 'Orange', 'Blue', 'Purple'], 1),
+  Pergunta('🟩 What color is this?', ['Green', 'Blue', 'Yellow', 'Pink'], 0),
+  Pergunta('Which shape has three sides?', ['Circle', 'Square', 'Triangle', 'Pentagon'], 2),
+  Pergunta('🔷 What color is this shape?', ['Red', 'Blue', 'Green', 'Orange'], 1),
+];
+
 const perguntasMatematica = [
   Pergunta('Quanto é 4 + 5?', ['8', '9', '10', '11'], 1),
   Pergunta('Quanto é 12 - 7?', ['4', '5', '6', '7'], 1),
@@ -152,11 +166,16 @@ class _JogoQuizState extends State<JogoQuiz> {
 
   late final List<Pergunta> perguntas = (() {
     final categoria = widget.tipo == 'Português' ? 'portugues' : 'cores';
-    final originais = widget.tipo == 'Português' ? perguntasPortugues : perguntasCores;
+    final ingles = ConfiguracoesJogo.instancia.idioma == 'en-US';
+    final originais = widget.tipo == 'Português'
+        ? perguntasPortugues
+        : (ingles ? perguntasCoresIngles : perguntasCores);
+    // O banco adicional ainda é português; não misturar idiomas na atividade visual.
     final todas = <Pergunta>[
       ...originais,
-      for (final q in banco.questoesExtras[categoria]!)
-        Pergunta(q.texto, q.opcoes, q.correta),
+      if (!ingles || widget.tipo == 'Português')
+        for (final q in banco.questoesExtras[categoria]!)
+          Pergunta(q.texto, q.opcoes, q.correta),
     ]..shuffle(Random());
     return todas.take(10).toList();
   })();
