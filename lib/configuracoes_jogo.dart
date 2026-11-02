@@ -72,14 +72,13 @@ class TelaConfiguracoes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final config = ConfiguracoesJogo.instancia;
-    final ingles = config.idioma == 'en-US';
-
-    return Scaffold(
+    return AnimatedBuilder(
+      animation: config,
+      builder: (context, _) {
+        final ingles = config.idioma == 'en-US';
+        return Scaffold(
       appBar: AppBar(title: Text(ingles ? 'Settings' : 'Configurações')),
-      body: AnimatedBuilder(
-        animation: config,
-        builder: (context, _) {
-          return ListView(
+      body: ListView(
             padding: const EdgeInsets.all(20),
             children: [
               Text(
@@ -169,9 +168,9 @@ class TelaConfiguracoes extends StatelessWidget {
                 },
               ),
             ],
-          );
-        },
       ),
+    );
+      },
     );
   }
 }
