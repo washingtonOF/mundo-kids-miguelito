@@ -216,6 +216,21 @@ class _JogoQuizState extends State<JogoQuiz> {
   }
 
   String _prepararTexto(String texto) {
+    if (ingles) {
+      return texto
+          .replaceAll('🔴', 'red circle')
+          .replaceAll('🔵', 'blue circle')
+          .replaceAll('🟡', 'yellow circle')
+          .replaceAll('🟩', 'green square')
+          .replaceAll('🔺', 'red triangle')
+          .replaceAll('⬛', 'black square')
+          .replaceAll('⚪', 'white circle')
+          .replaceAll('🔷', 'blue diamond')
+          .replaceAll(' + ', ' plus ')
+          .replaceAll(' - ', ' minus ')
+          .replaceAll(' × ', ' times ')
+          .replaceAll(' ÷ ', ' divided by ');
+    }
     return texto
         .replaceAll('🔴', 'círculo vermelho')
         .replaceAll('🔵', 'círculo azul')
@@ -225,9 +240,11 @@ class _JogoQuizState extends State<JogoQuiz> {
         .replaceAll('⬛', 'quadrado preto')
         .replaceAll('⚪', 'círculo branco')
         .replaceAll('🔷', 'losango azul')
-        .replaceAll(' + ', ' mais ');
+        .replaceAll(' + ', ' mais ')
+        .replaceAll(' - ', ' menos ')
+        .replaceAll(' × ', ' vezes ')
+        .replaceAll(' ÷ ', ' dividido por ');
   }
-
   Future<void> _falarPergunta() async {
     if (!ConfiguracoesJogo.instancia.instrucoesAudio) return;
     if (!mounted || respondeu || indice >= perguntas.length) return;
@@ -269,7 +286,7 @@ class _JogoQuizState extends State<JogoQuiz> {
     final nome = prefs.getString('nome_crianca')?.trim() ?? '';
 
     final mensagem = ingles
-        ? (acertou ? 'Great job${nome.isNotEmpty ? ', $nome' : ''}! Correct answer!' : 'Keep trying${nome.isNotEmpty ? ', $nome' : ''}! The correct answer is ${perguntas[indice].alternativas[perguntas[indice].correta]}.')
+        ? (acertou ? 'Great job${nome.isNotEmpty ? ', $nome' : ''}! Correct answer!' : 'Keep trying${nome.isNotEmpty ? ', $nome' : ''}! The correct answer is ${_prepararTexto(perguntas[indice].alternativas[perguntas[indice].correta])}.')
         : acertou
         ? 'Parabéns${nome.isNotEmpty ? ', $nome' : ''}! '
               'Você acertou! Muito bem!'
