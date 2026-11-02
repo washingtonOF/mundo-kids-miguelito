@@ -1,5 +1,6 @@
 import 'package:flutter_tts/flutter_tts.dart';
 import 'configuracoes_jogo.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Configuração de voz comum às modalidades individual e multiplayer.
 class VozMiguelito {
@@ -26,7 +27,9 @@ class VozMiguelito {
   }
 
   static Future<void> configurar(FlutterTts voz) async {
-    await voz.setLanguage('pt-BR');
+    final prefs = await SharedPreferences.getInstance();
+    final idioma = prefs.getString('idioma_miguelito') ?? 'pt-BR';
+    await voz.setLanguage(idioma == 'en-US' ? 'en-US' : 'pt-BR');
     await voz.setSpeechRate(0.48);
     await voz.setVolume(1.0);
     await voz.setPitch(1.05);
