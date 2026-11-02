@@ -71,22 +71,13 @@ class TelaInicial extends StatefulWidget {
 }
 
 class _TelaInicialState extends State<TelaInicial> {
-  String _idioma = 'pt-BR';
-
-  @override
-  void initState() {
-    super.initState();
-    _carregarIdioma();
-  }
-
-  Future<void> _carregarIdioma() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (mounted) setState(() => _idioma = prefs.getString('idioma_miguelito') ?? 'pt-BR');
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AnimatedBuilder(
+      animation: ConfiguracoesJogo.instancia,
+      builder: (context, _) {
+        final _idioma = ConfiguracoesJogo.instancia.idioma;
+        return Scaffold(
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -171,6 +162,8 @@ class _TelaInicialState extends State<TelaInicial> {
           ),
         ),
       ),
+    );
+      },
     );
   }
 }
