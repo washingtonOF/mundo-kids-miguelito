@@ -805,6 +805,7 @@ class _BatalhaEquipesState extends State<BatalhaEquipes> {
   }
 
   void _proximaRodada() {
+    if (resposta == null || rodada >= totalRodadas) return;
     setState(() {
       rodada++;
       resposta = null;
@@ -823,9 +824,10 @@ class _BatalhaEquipesState extends State<BatalhaEquipes> {
 
       _falar(
         melhor == 0
-            ? 'Fim de jogo! Obrigado por participar!'
-            : 'Fim de jogo! Parabéns! '
-                  'Equipe vencedora: $vencedores!',
+            ? (ingles ? 'Game over! Thanks for playing!' : 'Fim de jogo! Obrigado por participar!')
+            : (ingles
+                ? 'Game over! Congratulations! Winning team: $vencedores!'
+                : 'Fim de jogo! Parabéns! Equipe vencedora: $vencedores!'),
       );
     }
   }
