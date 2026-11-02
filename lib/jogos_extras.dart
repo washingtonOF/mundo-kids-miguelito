@@ -54,7 +54,7 @@ const perguntasPortugues = [
     'Caza',
     'Casa',
     'Cassa',
-    'Cassa',
+    'Cassaço',
   ], 1),
   Pergunta('Qual é a primeira letra de BOLA?', ['A', 'B', 'L', 'O'], 1),
   Pergunta('Quantas sílabas tem SAPATO?', ['1', '2', '3', '4'], 2),
@@ -94,7 +94,7 @@ const perguntasPortugues = [
 // Exercícios de vocabulário português com instruções em inglês.
 // A atividade continua ensinando palavras portuguesas, inclusive no modo inglês.
 const perguntasPortuguesIngles = [
-  Pergunta('Which Portuguese word is spelled correctly?', ['Caza', 'Casa', 'Cassa', 'Cassa'], 1),
+  Pergunta('Which Portuguese word is spelled correctly?', ['Caza', 'Casa', 'Cassa', 'Cassaço'], 1),
   Pergunta('What is the first letter of BOLA?', ['A', 'B', 'L', 'O'], 1),
   Pergunta('How many syllables are in SAPATO?', ['1', '2', '3', '4'], 2),
   Pergunta('What is the plural of FLOR in Portuguese?', ['Floras', 'Flores', 'Florão', 'Flor'], 1),
