@@ -183,6 +183,7 @@ class JogoQuiz extends StatefulWidget {
 
 class _JogoQuizState extends State<JogoQuiz> {
   final FlutterTts _vozMiguelito = FlutterTts();
+  int _versaoVoz = 0;
 
   bool get ingles => ConfiguracoesJogo.instancia.idioma == 'en-US';
 
@@ -251,6 +252,7 @@ class _JogoQuizState extends State<JogoQuiz> {
     if (!mounted || respondeu || indice >= perguntas.length) return;
 
     final indiceAtual = indice;
+    final versao = ++_versaoVoz;
     final pergunta = perguntas[indiceAtual];
 
     final prefs = await SharedPreferences.getInstance();
@@ -273,7 +275,8 @@ class _JogoQuizState extends State<JogoQuiz> {
     await _vozMiguelito.stop();
     await VozMiguelito.configurar(_vozMiguelito);
 
-    if (!mounted || indiceAtual != indice || respondeu) return;
+    if (!mounted || indiceAtual != indice || respondeu ||
+        versao != _versaoVoz || !ConfiguracoesJogo.instancia.instrucoesAudio) return;
 
     await _vozMiguelito.speak(mensagem);
   }
@@ -282,6 +285,7 @@ class _JogoQuizState extends State<JogoQuiz> {
     if (!ConfiguracoesJogo.instancia.instrucoesAudio) return;
 
     final indiceRespondido = indice;
+    final versao = ++_versaoVoz;
     final respostaCorreta = _prepararTexto(perguntas[indiceRespondido].alternativas[perguntas[indiceRespondido].correta]);
     final prefs = await SharedPreferences.getInstance();
     if (!mounted || indiceRespondido != indice) return;
@@ -318,6 +322,7 @@ class _JogoQuizState extends State<JogoQuiz> {
   }
 
   void _proxima() {
+    _versaoVoz++;
     if (!respondeu || indice >= perguntas.length) return;
     setState(() {
       indice++;
@@ -336,6 +341,7 @@ class _JogoQuizState extends State<JogoQuiz> {
 
   @override
   void dispose() {
+    _versaoVoz++;
     _vozMiguelito.stop();
     super.dispose();
   }
