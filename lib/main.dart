@@ -33,6 +33,8 @@ Future<void> main() async {
 
   await FirebaseAuth.instance.signInAnonymously();
 
+  await ConfiguracoesJogo.instancia.carregar();
+
   runApp(const MundoKidsApp());
 }
 
