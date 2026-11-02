@@ -128,6 +128,7 @@ class ServicoMultiplayer {
       RegExp(r'^[A-HJ-NP-Z2-9]{6}$').hasMatch(codigo);
 
   static Future<void> entrarSala(String codigo, String apelido) async {
+    codigo = codigo.trim().toUpperCase();
     final nome = apelido.trim();
     if (nome.isEmpty || nome.length > 30) {
       throw ArgumentError('Digite um apelido de até 30 caracteres.');
