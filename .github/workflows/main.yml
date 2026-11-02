@@ -5,7 +5,11 @@ on:
   workflow_dispatch:
 
 jobs:
+  validar:
+    uses: ./.github/workflows/validacao.yml
+
   build:
+    needs: validar
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
@@ -30,12 +34,6 @@ jobs:
 
       - name: Verificar ambiente
         run: flutter doctor -v
-
-      - name: Analisar codigo Dart
-        run: flutter analyze --no-fatal-infos --no-fatal-warnings
-
-      - name: Executar testes automatizados
-        run: flutter test
 
       - name: Preparar assinatura de produção
         env:
