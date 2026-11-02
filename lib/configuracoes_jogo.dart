@@ -72,42 +72,43 @@ class TelaConfiguracoes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final config = ConfiguracoesJogo.instancia;
+    final ingles = config.idioma == 'en-US';
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Configurações')),
+      appBar: AppBar(title: Text(ingles ? 'Settings' : 'Configurações')),
       body: AnimatedBuilder(
         animation: config,
         builder: (context, _) {
           return ListView(
             padding: const EdgeInsets.all(20),
             children: [
-              const Text(
-                'Personalize sua aventura!',
+              Text(
+                ingles ? 'Customize your adventure!' : 'Personalize sua aventura!',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 24),
               DropdownButtonFormField<NivelJogo>(
                 initialValue: config.nivel,
-                decoration: const InputDecoration(
-                  labelText: 'Nível do jogo',
+                decoration: InputDecoration(
+                  labelText: ingles ? 'Game difficulty' : 'Nível do jogo',
                   border: OutlineInputBorder(),
                 ),
-                items: const [
+                items: [
                   DropdownMenuItem(
                     value: NivelJogo.adaptativo,
-                    child: Text('Adaptativo'),
+                    child: Text(ingles ? 'Adaptive' : 'Adaptativo'),
                   ),
                   DropdownMenuItem(
                     value: NivelJogo.facil,
-                    child: Text('Fácil'),
+                    child: Text(ingles ? 'Easy' : 'Fácil'),
                   ),
                   DropdownMenuItem(
                     value: NivelJogo.medio,
-                    child: Text('Médio'),
+                    child: Text(ingles ? 'Medium' : 'Médio'),
                   ),
                   DropdownMenuItem(
                     value: NivelJogo.dificil,
-                    child: Text('Difícil'),
+                    child: Text(ingles ? 'Hard' : 'Difícil'),
                   ),
                 ],
                 onChanged: (valor) {
@@ -118,20 +119,20 @@ class TelaConfiguracoes extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               SwitchListTile(
-                title: const Text('Modo tranquilo'),
-                subtitle: const Text('Experiência com menos estímulos.'),
+                title: Text(ingles ? 'Calm mode' : 'Modo tranquilo'),
+                subtitle: Text(ingles ? 'An experience with fewer stimuli.' : 'Experiência com menos estímulos.'),
                 value: config.modoTranquilo,
                 onChanged: config.alterarModoTranquilo,
               ),
               SwitchListTile(
-                title: const Text('Instruções em áudio'),
-                subtitle: const Text('Permitir orientações faladas.'),
+                title: Text(ingles ? 'Voice instructions' : 'Instruções em áudio'),
+                subtitle: Text(ingles ? 'Enable spoken guidance.' : 'Permitir orientações faladas.'),
                 value: config.instrucoesAudio,
                 onChanged: config.alterarInstrucoesAudio,
               ),
               SwitchListTile(
-                title: const Text('Cronômetro'),
-                subtitle: const Text('Permitir atividades com tempo.'),
+                title: Text(ingles ? 'Timer' : 'Cronômetro'),
+                subtitle: Text(ingles ? 'Enable timed activities.' : 'Permitir atividades com tempo.'),
                 value: config.cronometro,
                 onChanged: config.alterarCronometro,
               ),
@@ -155,8 +156,8 @@ class TelaConfiguracoes extends StatelessWidget {
 
               ListTile(
                 leading: const Icon(Icons.logout, color: Colors.deepPurple),
-                title: const Text('Trocar jogador'),
-                subtitle: const Text('Entrar com o nome de outra criança'),
+                title: Text(ingles ? 'Switch player' : 'Trocar jogador'),
+                subtitle: Text(ingles ? 'Enter another child’s name' : 'Entrar com o nome de outra criança'),
                 onTap: () async {
                   final prefs = await SharedPreferences.getInstance();
                   await prefs.remove('nome_crianca');
