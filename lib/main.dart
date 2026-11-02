@@ -732,20 +732,26 @@ class _TelaMatematicaState extends State<TelaMatematica> {
   Future<void> _falarResultado(bool acertou) async {
     if (!ConfiguracoesJogo.instancia.instrucoesAudio) return;
 
+    final indiceRespondido = _indice;
+    final respostaCorreta = _perguntas[indiceRespondido].correta;
+    final ingles = ConfiguracoesJogo.instancia.idioma == 'en-US';
     final prefs = await SharedPreferences.getInstance();
+    if (!mounted || indiceRespondido != _indice) return;
     final nome = prefs.getString('nome_crianca')?.trim() ?? '';
+    final saudacao = nome.isEmpty ? '' : '$nome, ';
 
-    final mensagem = acertou
-        ? (nome.isNotEmpty
-              ? 'Uhuuul! Parabéns, $nome! Você acertou! Muito bem!'
-              : 'Uhuuul! Parabéns! Você acertou! Muito bem!')
-        : (nome.isNotEmpty
-              ? 'Não foi dessa vez, $nome! A resposta correta é ${_perguntas[_indice].correta}. Continue tentando!'
-              : 'Não foi dessa vez! A resposta correta é ${_perguntas[_indice].correta}. Continue tentando!');
+    final mensagem = ingles
+        ? (acertou
+            ? 'Great job! ${saudacao}You got it right!'
+            : 'Not quite, ${saudacao}the correct answer is $respostaCorreta. Keep trying!')
+        : (acertou
+            ? 'Parabéns! ${saudacao}Você acertou! Muito bem!'
+            : 'Não foi dessa vez, ${saudacao}a resposta correta é $respostaCorreta. Continue tentando!');
 
     await _vozMiguelito.stop();
-    await _vozMiguelito.setLanguage('pt-BR');
+    if (!mounted || indiceRespondido != _indice) return;
     await VozMiguelito.configurar(_vozMiguelito);
+    if (!mounted || indiceRespondido != _indice) return;
     await _vozMiguelito.speak(mensagem);
   }
 
