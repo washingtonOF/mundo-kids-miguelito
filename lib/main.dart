@@ -29,11 +29,16 @@ import 'multiplayer_online.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-  await FirebaseAuth.instance.signInAnonymously();
-
+  // Os jogos individuais devem abrir mesmo sem conexão com a internet.
+  // O multiplayer continuará exigindo autenticação e acesso ao Firebase.
   await ConfiguracoesJogo.instancia.carregar();
+
+  try {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    await FirebaseAuth.instance.signInAnonymously();
+  } catch (erro) {
+    debugPrint('Miguelito: serviços online indisponíveis: $erro');
+  }
 
   runApp(const MundoKidsApp());
 }
