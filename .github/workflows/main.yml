@@ -37,6 +37,23 @@ jobs:
       - name: Executar testes automatizados
         run: flutter test
 
+      - name: Preparar assinatura de produção
+        env:
+          KEYSTORE_BASE64: ${{ secrets.MIGUELITO_KEYSTORE_BASE64 }}
+          MIGUELITO_STORE_PASSWORD: ${{ secrets.MIGUELITO_STORE_PASSWORD }}
+          MIGUELITO_KEY_ALIAS: ${{ secrets.MIGUELITO_KEY_ALIAS }}
+          MIGUELITO_KEY_PASSWORD: ${{ secrets.MIGUELITO_KEY_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ] || [ -z "$MIGUELITO_STORE_PASSWORD" ] || [ -z "$MIGUELITO_KEY_ALIAS" ] || [ -z "$MIGUELITO_KEY_PASSWORD" ]; then
+            echo "::error::Configure os quatro secrets MIGUELITO_* antes de gerar um APK definitivo."
+            exit 1
+          fi
+          echo "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/miguelito-release.jks"
+          echo "MIGUELITO_KEYSTORE_PATH=$RUNNER_TEMP/miguelito-release.jks" >> "$GITHUB_ENV"
+          echo "MIGUELITO_STORE_PASSWORD=$MIGUELITO_STORE_PASSWORD" >> "$GITHUB_ENV"
+          echo "MIGUELITO_KEY_ALIAS=$MIGUELITO_KEY_ALIAS" >> "$GITHUB_ENV"
+          echo "MIGUELITO_KEY_PASSWORD=$MIGUELITO_KEY_PASSWORD" >> "$GITHUB_ENV"
+
       - name: Gerar APK
         run: flutter build apk --release
 
