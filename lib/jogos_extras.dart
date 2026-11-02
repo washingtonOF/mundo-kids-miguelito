@@ -452,10 +452,10 @@ class _JogoQuizState extends State<JogoQuiz> {
                         : (respondeu ? 'Ouvir resultado novamente' : 'Ouvir pergunta e alternativas')),
                   ),
                 ),
-              LinearProgressIndicator(value: (indice + 1) / perguntas.length),
+              LinearProgressIndicator(value: (indice + 1) / 10),
               const SizedBox(height: 20),
               Text(
-                ingles ? 'Question ${indice + 1}/${perguntas.length}   ⭐ $pontos points' : 'Questão ${indice + 1}/${perguntas.length}   ⭐ $pontos pontos',
+                ingles ? 'Question ${indice + 1}/10   ⭐ $pontos points' : 'Questão ${indice + 1}/10   ⭐ $pontos pontos',
                 style: const TextStyle(fontSize: 18),
               ),
               const SizedBox(height: 25),
@@ -468,14 +468,6 @@ class _JogoQuizState extends State<JogoQuiz> {
                 ),
               ),
               const SizedBox(height: 15),
-              if (ConfiguracoesJogo.instancia.instrucoesAudio)
-                Center(
-                  child: FilledButton.icon(
-                    onPressed: respondeu ? null : _falarPergunta,
-                    icon: const Icon(Icons.volume_up),
-                    label: Text(ingles ? 'Listen to question and answers' : 'Ouvir pergunta e alternativas'),
-                  ),
-                ),
               const SizedBox(height: 25),
               for (int i = 0; i < p.alternativas.length; i++)
                 Padding(
