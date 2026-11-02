@@ -223,7 +223,14 @@ class _TelaInicialState extends State<TelaInicial> {
                                   fontSize: 20, fontWeight: FontWeight.w800)),
                             ),
                             SizedBox(height: compacto ? 4 : 14),
-                            AvatarMiguelito(tamanho: tamanhoMascote),
+                            Image.asset(
+                              'assets/images/miguelito.png',
+                              width: tamanhoMascote,
+                              height: tamanhoMascote,
+                              fit: BoxFit.contain,
+                              errorBuilder: (_, __, ___) =>
+                                  AvatarMiguelito(tamanho: tamanhoMascote),
+                            ),
                             SizedBox(height: compacto ? 8 : 18),
                             Row(
                               children: [
@@ -1217,7 +1224,9 @@ class _TelaIdentificacaoState extends State<TelaIdentificacao> {
                     style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
-                  const AvatarMiguelito(tamanho: 205),
+                  // O fundo de boas-vindas já contém o Miguelito.
+                  // Não duplicar o mascote por cima da arte.
+
                   const SizedBox(height: 12),
                   Text(
                     _idioma == 'pt-BR' ? 'Olá! Eu sou o Miguelito!\nComo você se chama?' : 'Hi! I am Miguelito!\nWhat is your name?',
