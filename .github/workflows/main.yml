@@ -50,11 +50,12 @@ jobs:
           fi
           echo "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/miguelito-release.jks"
           echo "MIGUELITO_KEYSTORE_PATH=$RUNNER_TEMP/miguelito-release.jks" >> "$GITHUB_ENV"
-          echo "MIGUELITO_STORE_PASSWORD=$MIGUELITO_STORE_PASSWORD" >> "$GITHUB_ENV"
-          echo "MIGUELITO_KEY_ALIAS=$MIGUELITO_KEY_ALIAS" >> "$GITHUB_ENV"
-          echo "MIGUELITO_KEY_PASSWORD=$MIGUELITO_KEY_PASSWORD" >> "$GITHUB_ENV"
 
       - name: Gerar APK
+        env:
+          MIGUELITO_STORE_PASSWORD: ${{ secrets.MIGUELITO_STORE_PASSWORD }}
+          MIGUELITO_KEY_ALIAS: ${{ secrets.MIGUELITO_KEY_ALIAS }}
+          MIGUELITO_KEY_PASSWORD: ${{ secrets.MIGUELITO_KEY_PASSWORD }}
         run: flutter build apk --release
 
       - name: Verificar assinatura do APK
