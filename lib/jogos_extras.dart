@@ -593,6 +593,7 @@ class ConfigurarEquipes extends StatefulWidget {
 }
 
 class _ConfigurarEquipesState extends State<ConfigurarEquipes> {
+  bool get ingles => ConfiguracoesJogo.instancia.idioma == 'en-US';
   int quantidade = 2;
   final nomes = List.generate(
     4,
@@ -608,15 +609,15 @@ class _ConfigurarEquipesState extends State<ConfigurarEquipes> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('🏆 Preparar equipes')),
+    appBar: AppBar(title: Text(ingles ? '🏆 Set up teams' : '🏆 Preparar equipes')),
     body: Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 500),
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
-            const Text(
-              'Quantas equipes vão jogar?',
+            Text(
+              ingles ? 'How many teams will play?' : 'Quantas equipes vão jogar?',
               style: TextStyle(fontSize: 22),
             ),
             DropdownButton<int>(
@@ -625,7 +626,7 @@ class _ConfigurarEquipesState extends State<ConfigurarEquipes> {
               items: [2, 3, 4]
                   .map(
                     (n) =>
-                        DropdownMenuItem(value: n, child: Text('$n equipes')),
+                        DropdownMenuItem(value: n, child: Text(ingles ? '$n teams' : '$n equipes')),
                   )
                   .toList(),
               onChanged: (n) => setState(() => quantidade = n!),
@@ -637,7 +638,7 @@ class _ConfigurarEquipesState extends State<ConfigurarEquipes> {
                   controller: nomes[i],
                   maxLength: 20,
                   decoration: InputDecoration(
-                    labelText: 'Nome da equipe ${i + 1}',
+                    labelText: ingles ? 'Team ${i + 1} name' : 'Nome da equipe ${i + 1}',
                     border: const OutlineInputBorder(),
                   ),
                 ),
@@ -656,7 +657,7 @@ class _ConfigurarEquipesState extends State<ConfigurarEquipes> {
                   ),
                 ),
               ),
-              child: const Text('🎮 Começar batalha'),
+              child: Text(ingles ? '🎮 Start battle' : '🎮 Começar batalha'),
             ),
           ],
         ),
@@ -674,11 +675,12 @@ class BatalhaEquipes extends StatefulWidget {
 
 class _BatalhaEquipesState extends State<BatalhaEquipes> {
   final FlutterTts _voz = FlutterTts();
+  bool get ingles => ConfiguracoesJogo.instancia.idioma == 'en-US';
 
-  final List<Pergunta> perguntas = [
+  late final List<Pergunta> perguntas = [
     ...perguntasMatematica,
-    ...perguntasPortugues,
-    ...perguntasCores,
+    ...(ingles ? perguntasPortuguesIngles : perguntasPortugues),
+    ...(ingles ? perguntasCoresIngles : perguntasCores),
   ]..shuffle(Random());
 
   late final List<int> pontos = List.filled(widget.nomes.length, 0);
@@ -690,6 +692,7 @@ class _BatalhaEquipesState extends State<BatalhaEquipes> {
   static const totalRodadas = 12;
 
   String _textoFalado(String texto) {
+    if (ingles) return texto.replaceAll('🔴', 'red circle').replaceAll('🔵', 'blue circle').replaceAll('🟡', 'yellow circle').replaceAll('🟩', 'green square').replaceAll('🔺', 'red triangle').replaceAll('⬛', 'black square').replaceAll('⚪', 'white circle').replaceAll('🔷', 'blue diamond').replaceAll(' + ', ' plus ').replaceAll(' × ', ' times ').replaceAll(' ÷ ', ' divided by ').replaceAll(' - ', ' minus ');
     return texto
         .replaceAll('🔴', 'círculo vermelho')
         .replaceAll('🔵', 'círculo azul')
@@ -709,7 +712,6 @@ class _BatalhaEquipesState extends State<BatalhaEquipes> {
     if (!ConfiguracoesJogo.instancia.instrucoesAudio || !mounted) return;
 
     await _voz.stop();
-    await _voz.setLanguage('pt-BR');
     await VozMiguelito.configurar(_voz);
 
     if (!mounted) return;
@@ -726,14 +728,12 @@ class _BatalhaEquipesState extends State<BatalhaEquipes> {
     final alternativas = pergunta.alternativas
         .asMap()
         .entries
-        .map((item) => 'Opção ${String.fromCharCode(65 + item.key)}: ${_textoFalado(item.value)}.')
+        .map((item) => '${ingles ? 'Option' : 'Opção'} ${String.fromCharCode(65 + item.key)}: ${_textoFalado(item.value)}.')
         .join(' ');
 
     _falar(
-      'Agora é a vez da equipe $equipe! '
-      'Pergunta ${rodadaAtual + 1}. '
-      '${_textoFalado(pergunta.texto)} '
-      '$alternativas',
+      '${ingles ? 'Team $equipe, it is your turn! Question ${rodadaAtual + 1}.' : 'Agora é a vez da equipe $equipe! Pergunta ${rodadaAtual + 1}.'} '
+      '${_textoFalado(pergunta.texto)} $alternativas',
     );
   }
 
@@ -765,10 +765,8 @@ class _BatalhaEquipesState extends State<BatalhaEquipes> {
 
     _falar(
       acertou
-          ? 'Parabéns, equipe $equipe! Resposta correta!'
-          : 'Não foi dessa vez, equipe $equipe. '
-                'A resposta correta é '
-                '${_textoFalado(perguntas[rodada].alternativas[perguntas[rodada].correta])}.',
+          ? (ingles ? 'Well done, team $equipe! Correct answer!' : 'Parabéns, equipe $equipe! Resposta correta!')
+          : (ingles ? 'Not this time, team $equipe. The correct answer is ${_textoFalado(perguntas[rodada].alternativas[perguntas[rodada].correta])}.' : 'Não foi dessa vez, equipe $equipe. A resposta correta é ${_textoFalado(perguntas[rodada].alternativas[perguntas[rodada].correta])}.'),
     );
   }
 
@@ -815,7 +813,7 @@ class _BatalhaEquipesState extends State<BatalhaEquipes> {
     ].join(' e ');
 
     return Scaffold(
-      appBar: AppBar(title: const Text('🏆 Batalha de equipes')),
+      appBar: AppBar(title: Text(ingles ? '🏆 Team battle' : '🏆 Batalha de equipes')),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 700),
@@ -833,7 +831,7 @@ class _BatalhaEquipesState extends State<BatalhaEquipes> {
               const SizedBox(height: 24),
               if (fim) ...[
                 Text(
-                  '🏆 ${melhor == 0 ? 'Fim de jogo!' : 'Vencedor: $vencedores'}',
+                  '🏆 ${melhor == 0 ? (ingles ? 'Game over!' : 'Fim de jogo!') : (ingles ? 'Winner: $vencedores' : 'Vencedor: $vencedores')}',
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 27,
@@ -843,14 +841,13 @@ class _BatalhaEquipesState extends State<BatalhaEquipes> {
                 const SizedBox(height: 20),
                 FilledButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Nova partida'),
+                  child: Text(ingles ? 'New game' : 'Nova partida'),
                 ),
               ] else ...[
                 LinearProgressIndicator(value: (rodada + 1) / totalRodadas),
                 const SizedBox(height: 16),
                 Text(
-                  'Rodada ${rodada + 1}/$totalRodadas • '
-                  'Vez de ${widget.nomes[rodada % widget.nomes.length]}',
+                  ingles ? 'Round ${rodada + 1}/$totalRodadas • ${widget.nomes[rodada % widget.nomes.length]}\'s turn' : 'Rodada ${rodada + 1}/$totalRodadas • Vez de ${widget.nomes[rodada % widget.nomes.length]}',
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 22,
@@ -863,7 +860,7 @@ class _BatalhaEquipesState extends State<BatalhaEquipes> {
                     child: FilledButton.icon(
                       onPressed: resposta == null ? _falarRodada : null,
                       icon: const Icon(Icons.volume_up),
-                      label: const Text('Ouvir pergunta e alternativas'),
+                      label: Text(ingles ? 'Listen to question and answers' : 'Ouvir pergunta e alternativas'),
                     ),
                   ),
                 const SizedBox(height: 20),
@@ -890,9 +887,8 @@ class _BatalhaEquipesState extends State<BatalhaEquipes> {
                 if (resposta != null) ...[
                   Text(
                     resposta == perguntas[rodada].correta
-                        ? '🎉 Acertou!'
-                        : '💡 Correta: '
-                              '${perguntas[rodada].alternativas[perguntas[rodada].correta]}',
+                        ? (ingles ? '🎉 Correct!' : '🎉 Acertou!')
+                        : '${ingles ? '💡 Correct answer:' : '💡 Correta:'} ${perguntas[rodada].alternativas[perguntas[rodada].correta]}',
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 15),
@@ -900,8 +896,8 @@ class _BatalhaEquipesState extends State<BatalhaEquipes> {
                     onPressed: _proximaRodada,
                     child: Text(
                       rodada == totalRodadas - 1
-                          ? 'Ver resultado'
-                          : 'Próxima equipe',
+                          ? (ingles ? 'See results' : 'Ver resultado')
+                          : (ingles ? 'Next team' : 'Próxima equipe'),
                     ),
                   ),
                 ],
