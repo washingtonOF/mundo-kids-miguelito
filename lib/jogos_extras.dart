@@ -317,6 +317,7 @@ class _JogoQuizState extends State<JogoQuiz> {
   }
 
   void _proxima() {
+    if (!respondeu || indice >= perguntas.length) return;
     setState(() {
       indice++;
       respondeu = false;
@@ -343,10 +344,13 @@ class _JogoQuizState extends State<JogoQuiz> {
     if (indice >= perguntas.length) {
       return Scaffold(
         appBar: AppBar(title: Text(ingles ? '🏆 Results' : '🏆 Resultado')),
-        body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
+        body: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
               Text(
                 ingles ? '🎉 You earned $pontos points!' : '🎉 Você fez $pontos pontos!',
                 style: const TextStyle(fontSize: 26),
@@ -356,7 +360,9 @@ class _JogoQuizState extends State<JogoQuiz> {
                 onPressed: () => Navigator.pop(context),
                 child: Text(ingles ? 'Back to games' : 'Voltar aos jogos'),
               ),
-            ],
+                ],
+              ),
+            ),
           ),
         ),
       );
