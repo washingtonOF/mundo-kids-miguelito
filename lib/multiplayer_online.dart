@@ -1008,8 +1008,7 @@ class _TelaCampeonatoMultiplayerState extends State<TelaCampeonatoMultiplayer> {
       )),
     );
   }
-}
-).hasMatch(normalizarCodigo(codigo));
+}).hasMatch(normalizarCodigo(codigo));
 
   static Future<void> entrarSala(String codigo, String apelido) async {
     codigo = normalizarCodigo(codigo);
