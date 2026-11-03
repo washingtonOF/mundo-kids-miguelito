@@ -1008,3 +1008,4 @@ class _TelaCampeonatoMultiplayerState extends State<TelaCampeonatoMultiplayer> {
       )),
     );
   }
+}
