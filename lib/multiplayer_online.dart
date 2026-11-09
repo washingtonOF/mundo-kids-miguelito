@@ -766,12 +766,12 @@ class _TelaCampeonatoMultiplayerState extends State<TelaCampeonatoMultiplayer> {
   int _sequenciaNarracao = 0;
 
   Future<void> _falar(String mensagem) async {
-    if (!mounted || !_vozAtiva || !VozMiguelzãoo.habilitada) return;
+    if (!mounted || !_vozAtiva || !VozMiguelito.habilitada) return;
     final sequencia = ++_sequenciaNarracao;
     try {
       await _voz.stop();
       if (!mounted || !_vozAtiva || sequencia != _sequenciaNarracao) return;
-      await VozMiguelzãoo.configurar(_voz);
+      await VozMiguelito.configurar(_voz);
       if (!mounted || !_vozAtiva || sequencia != _sequenciaNarracao) return;
       await _voz.speak(mensagem);
     } catch (erro) {
@@ -780,7 +780,7 @@ class _TelaCampeonatoMultiplayerState extends State<TelaCampeonatoMultiplayer> {
   }
 
   Future<void> _lerPergunta(PerguntaCampeonato pergunta) async {
-    await _falar(VozMiguelzãoo.pergunta(pergunta.texto, pergunta.opcoes));
+    await _falar(VozMiguelito.pergunta(pergunta.texto, pergunta.opcoes));
   }
 
   Future<void> _narrarResultado(int pontos) async {
@@ -798,7 +798,7 @@ class _TelaCampeonatoMultiplayerState extends State<TelaCampeonatoMultiplayer> {
   @override
   void initState() {
     super.initState();
-    VozMiguelzãoo.configurar(_voz);
+    VozMiguelito.configurar(_voz);
     _relogio = Timer.periodic(const Duration(milliseconds: 250), (_) {
       if (mounted) setState(() => _agora = DateTime.now());
     });
@@ -968,7 +968,7 @@ class _TelaCampeonatoMultiplayerState extends State<TelaCampeonatoMultiplayer> {
                     textAlign: TextAlign.center, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
                  const SizedBox(height: 10),
                  TextButton.icon(
-                   onPressed: VozMiguelzãoo.habilitada ? () => _lerPergunta(perguntas[rodada]) : null,
+                   onPressed: VozMiguelito.habilitada ? () => _lerPergunta(perguntas[rodada]) : null,
                    icon: const Icon(Icons.volume_up),
                    label: const Text('OUVIR PERGUNTA E ALTERNATIVAS NOVAMENTE'),
                  ),
