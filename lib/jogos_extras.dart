@@ -182,7 +182,7 @@ class JogoQuiz extends StatefulWidget {
 }
 
 class _JogoQuizState extends State<JogoQuiz> {
-  final FlutterTts _vozMiguelito = FlutterTts();
+  final FlutterTts _vozMiguelzãoo = FlutterTts();
   int _versaoVoz = 0;
 
   bool get ingles => ConfiguracoesJogo.instancia.idioma == 'en-US';
@@ -310,14 +310,14 @@ class _JogoQuizState extends State<JogoQuiz> {
     if (!mounted || indiceAtual != indice || respondeu ||
         versao != _versaoVoz || !ConfiguracoesJogo.instancia.instrucoesAudio) return;
     try {
-      await _vozMiguelito.stop();
+      await _vozMiguelzãoo.stop();
       if (!mounted || versao != _versaoVoz) return;
-      await VozMiguelito.configurar(_vozMiguelito);
+      await VozMiguelzãoo.configurar(_vozMiguelzãoo);
       if (!mounted || indiceAtual != indice || respondeu ||
           versao != _versaoVoz || !ConfiguracoesJogo.instancia.instrucoesAudio) return;
-      await _vozMiguelito.speak(mensagem);
+      await _vozMiguelzãoo.speak(mensagem);
     } catch (erro) {
-      debugPrint('Miguelito: falha ao narrar pergunta: $erro');
+      debugPrint('Miguelzãoo: falha ao narrar pergunta: $erro');
     }
   }
 
@@ -343,14 +343,14 @@ class _JogoQuizState extends State<JogoQuiz> {
     if (!mounted || indiceRespondido != indice ||
         versao != _versaoVoz || !ConfiguracoesJogo.instancia.instrucoesAudio) return;
     try {
-      await _vozMiguelito.stop();
+      await _vozMiguelzãoo.stop();
       if (!mounted || versao != _versaoVoz) return;
-      await VozMiguelito.configurar(_vozMiguelito);
+      await VozMiguelzãoo.configurar(_vozMiguelzãoo);
       if (!mounted || indiceRespondido != indice ||
           versao != _versaoVoz || !ConfiguracoesJogo.instancia.instrucoesAudio) return;
-      await _vozMiguelito.speak(mensagem);
+      await _vozMiguelzãoo.speak(mensagem);
     } catch (erro) {
-      debugPrint('Miguelito: falha ao narrar resultado: $erro');
+      debugPrint('Miguelzãoo: falha ao narrar resultado: $erro');
     }
   }
 
@@ -400,14 +400,14 @@ class _JogoQuizState extends State<JogoQuiz> {
         if (mounted) _falarPergunta();
       });
     } else {
-      _vozMiguelito.stop();
+      _vozMiguelzãoo.stop();
     }
   }
 
   @override
   void dispose() {
     _versaoVoz++;
-    _vozMiguelito.stop();
+    _vozMiguelzãoo.stop();
     super.dispose();
   }
 
@@ -546,7 +546,7 @@ class _JogoMemoriaState extends State<JogoMemoria> {
     if (!mounted) return;
 
     await _vozMemoria.stop();
-    await VozMiguelito.configurar(_vozMemoria);
+    await VozMiguelzãoo.configurar(_vozMemoria);
 
     if (!mounted) return;
     await _vozMemoria.speak(mensagem);
@@ -842,12 +842,12 @@ class _BatalhaEquipesState extends State<BatalhaEquipes> {
     try {
       await _voz.stop();
       if (!mounted || versao != _versaoNarracao) return;
-      await VozMiguelito.configurar(_voz);
+      await VozMiguelzãoo.configurar(_voz);
       if (!mounted || versao != _versaoNarracao ||
           !ConfiguracoesJogo.instancia.instrucoesAudio) return;
       await _voz.speak(texto);
     } catch (erro) {
-      debugPrint('Miguelito: falha na voz de equipes: $erro');
+      debugPrint('Miguelzãoo: falha na voz de equipes: $erro');
     }
   }
 
