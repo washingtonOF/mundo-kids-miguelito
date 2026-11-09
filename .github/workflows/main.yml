@@ -1,82 +1,56 @@
-
-name: Gerar APK Miguelito 1.1.0
+name: Publicar Miguelzãoo Web
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: miguelzaoo-pages
+  cancel-in-progress: true
 
 jobs:
   validar:
     uses: ./.github/workflows/validacao.yml
 
-  build:
+  web:
+    name: Compilar e publicar Web
     needs: validar
     runs-on: ubuntu-latest
-    timeout-minutes: 45
-
+    timeout-minutes: 35
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Baixar projeto
+      - name: Baixar codigo
         uses: actions/checkout@v4
-
-      - name: Instalar Java 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-
       - name: Instalar Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
           cache: true
-
       - name: Instalar dependencias
         run: flutter pub get
-
-      - name: Verificar ambiente
-        run: flutter doctor -v
-
-      - name: Preparar assinatura de produção
-        env:
-          KEYSTORE_BASE64: ${{ secrets.MIGUELITO_KEYSTORE_BASE64 }}
-          MIGUELITO_STORE_PASSWORD: ${{ secrets.MIGUELITO_STORE_PASSWORD }}
-          MIGUELITO_KEY_ALIAS: ${{ secrets.MIGUELITO_KEY_ALIAS }}
-          MIGUELITO_KEY_PASSWORD: ${{ secrets.MIGUELITO_KEY_PASSWORD }}
-        run: |
-          if [ -z "$KEYSTORE_BASE64" ] || [ -z "$MIGUELITO_STORE_PASSWORD" ] || [ -z "$MIGUELITO_KEY_ALIAS" ] || [ -z "$MIGUELITO_KEY_PASSWORD" ]; then
-            echo "::error::Configure os quatro secrets MIGUELITO_* antes de gerar um APK definitivo."
-            exit 1
-          fi
-          echo "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/miguelito-release.jks"
-          echo "MIGUELITO_KEYSTORE_PATH=$RUNNER_TEMP/miguelito-release.jks" >> "$GITHUB_ENV"
-
-      - name: Gerar APK
-        env:
-          MIGUELITO_STORE_PASSWORD: ${{ secrets.MIGUELITO_STORE_PASSWORD }}
-          MIGUELITO_KEY_ALIAS: ${{ secrets.MIGUELITO_KEY_ALIAS }}
-          MIGUELITO_KEY_PASSWORD: ${{ secrets.MIGUELITO_KEY_PASSWORD }}
-        run: flutter build apk --release
-
-      - name: Verificar assinatura do APK
-        run: |
-          APK="build/app/outputs/flutter-apk/app-release.apk"
-          test -s "$APK" || { echo "::error::APK não encontrado ou vazio."; exit 1; }
-          APKSIGNER=$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -n 1)
-          test -n "$APKSIGNER" || { echo "::error::apksigner não encontrado no Android SDK."; exit 1; }
-          "$APKSIGNER" verify --verbose "$APK"
-          AAPT=$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -n 1)
-          test -n "$AAPT" || { echo "::error::aapt não encontrado no Android SDK."; exit 1; }
-          INFO=$("$AAPT" dump badging "$APK")
-          echo "$INFO" | grep -q "name='com.example.mundo_kids'" || { echo "::error::Identificador Android inesperado."; exit 1; }
-          echo "$INFO" | grep -q "versionName='1.1.0'" || { echo "::error::Versão do APK diferente de 1.1.0."; exit 1; }
-          echo "$INFO" | grep -q "versionCode='2'" || { echo "::error::Código de versão diferente de 2."; exit 1; }
-
-      - name: Disponibilizar APK
+      - name: Compilar site Flutter
+        run: flutter build web --release --base-href /mundo-kids-miguelito/
+      - name: Disponibilizar site compilado
         uses: actions/upload-artifact@v4
         with:
-          name: Miguelito-1.1.0-Android
-          path: build/app/outputs/flutter-apk/app-release.apk
-          retention-days: 30
+          name: Miguelzaoo-Web
+          path: build/web/
           if-no-files-found: error
+          retention-days: 30
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Preparar publicacao
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+      - name: Publicar site
+        id: deployment
+        uses: actions/deploy-pages@v4
