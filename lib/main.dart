@@ -72,9 +72,9 @@ class MundoKidsApp extends StatelessWidget {
 }
 
 /// Mascote vetorial independente de arquivos externos: aparece também offline.
-class AvatarMiguelzãoo extends StatelessWidget {
+class AvatarMiguelito extends StatelessWidget {
   final double tamanho;
-  const AvatarMiguelzãoo({super.key, this.tamanho = 220});
+  const AvatarMiguelito({super.key, this.tamanho = 220});
 
   @override
   Widget build(BuildContext context) => Semantics(
@@ -85,12 +85,12 @@ class AvatarMiguelzãoo extends StatelessWidget {
     child: SizedBox(
       width: tamanho,
       height: tamanho,
-      child: CustomPaint(painter: _PintorMiguelzãoo()),
+      child: CustomPaint(painter: _PintorMiguelito()),
     ),
   );
 }
 
-class _PintorMiguelzãoo extends CustomPainter {
+class _PintorMiguelito extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     canvas.save();
@@ -229,7 +229,7 @@ class _TelaInicialState extends State<TelaInicial> {
                               height: tamanhoMascote,
                               fit: BoxFit.contain,
                               errorBuilder: (_, __, ___) =>
-                                  AvatarMiguelzãoo(tamanho: tamanhoMascote),
+                                  AvatarMiguelito(tamanho: tamanhoMascote),
                             ),
                             SizedBox(height: compacto ? 8 : 18),
                             Row(
@@ -632,7 +632,7 @@ class TelaMatematica extends StatefulWidget {
 }
 
 class _TelaMatematicaState extends State<TelaMatematica> {
-  final FlutterTts _vozMiguelzãoo = FlutterTts();
+  final FlutterTts _vozMiguelito = FlutterTts();
 
   Future<void> _falarPergunta() async {
     if (!ConfiguracoesJogo.instancia.instrucoesAudio) return;
@@ -664,17 +664,17 @@ class _TelaMatematicaState extends State<TelaMatematica> {
         ? '$nome, ${ingles ? 'let’s go!' : 'vamos lá!'} $pergunta $alternativas'
         : '${ingles ? 'Let’s go!' : 'Vamos lá!'} $pergunta $alternativas';
 
-    await _vozMiguelzãoo.stop();
-    await VozMiguelzãoo.configurar(_vozMiguelzãoo);
+    await _vozMiguelito.stop();
+    await VozMiguelito.configurar(_vozMiguelito);
 
     if (!mounted || indiceAtual != _indice || _selecionada != null) return;
-    await _vozMiguelzãoo.speak(mensagem);
+    await _vozMiguelito.speak(mensagem);
   }
 
   @override
   void dispose() {
     _cronometroTimer?.cancel();
-    _vozMiguelzãoo.stop();
+    _vozMiguelito.stop();
     super.dispose();
   }
 
@@ -870,11 +870,11 @@ class _TelaMatematicaState extends State<TelaMatematica> {
             ? 'Parabéns! ${saudacao}Você acertou! Muito bem!'
             : 'Não foi dessa vez, ${saudacao}a resposta correta é $respostaCorreta. Continue tentando!');
 
-    await _vozMiguelzãoo.stop();
+    await _vozMiguelito.stop();
     if (!mounted || indiceRespondido != _indice) return;
-    await VozMiguelzãoo.configurar(_vozMiguelzãoo);
+    await VozMiguelito.configurar(_vozMiguelito);
     if (!mounted || indiceRespondido != _indice) return;
-    await _vozMiguelzãoo.speak(mensagem);
+    await _vozMiguelito.speak(mensagem);
   }
 
   void _proxima() {
