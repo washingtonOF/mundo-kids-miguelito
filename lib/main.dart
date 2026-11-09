@@ -1,4 +1,4 @@
-// Miguelito — em desenvolvimento.
+// Miguelzãoo — em desenvolvimento.
 // Propriedade: Washington Santos de Souza - IsamigShop.
 // Uma homenagem ao meu filho amado, Lucas Miguel.
 // Mensagem reservada ao código-fonte; não exibir na interface.
@@ -37,7 +37,7 @@ Future<void> main() async {
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
     await FirebaseAuth.instance.signInAnonymously();
   } catch (erro) {
-    debugPrint('Miguelito: serviços online indisponíveis: $erro');
+    debugPrint('Miguelzãoo: serviços online indisponíveis: $erro');
   }
 
   runApp(const MundoKidsApp());
@@ -49,7 +49,7 @@ class MundoKidsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Miguelito',
+      title: 'Miguelzãoo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
@@ -72,25 +72,25 @@ class MundoKidsApp extends StatelessWidget {
 }
 
 /// Mascote vetorial independente de arquivos externos: aparece também offline.
-class AvatarMiguelito extends StatelessWidget {
+class AvatarMiguelzãoo extends StatelessWidget {
   final double tamanho;
-  const AvatarMiguelito({super.key, this.tamanho = 220});
+  const AvatarMiguelzãoo({super.key, this.tamanho = 220});
 
   @override
   Widget build(BuildContext context) => Semantics(
     label: ConfiguracoesJogo.instancia.idioma == 'en-US'
-        ? 'Miguelito, the friendly yellow mascot'
-        : 'Miguelito, o mascote amarelo e sorridente',
+        ? 'Miguelzãoo, the friendly yellow mascot'
+        : 'Miguelzãoo, o mascote amarelo e sorridente',
     image: true,
     child: SizedBox(
       width: tamanho,
       height: tamanho,
-      child: CustomPaint(painter: _PintorMiguelito()),
+      child: CustomPaint(painter: _PintorMiguelzãoo()),
     ),
   );
 }
 
-class _PintorMiguelito extends CustomPainter {
+class _PintorMiguelzãoo extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     canvas.save();
@@ -201,7 +201,7 @@ class _TelaInicialState extends State<TelaInicial> {
                             const Icon(Icons.school, size: 45, color: Color(0xFFFFDA2D)),
                             FittedBox(
                               fit: BoxFit.scaleDown,
-                              child: Text('Miguelito', style: TextStyle(
+                              child: Text('Miguelzãoo', style: TextStyle(
                                 fontSize: compacto ? 49 : 57,
                                 fontWeight: FontWeight.w900,
                                 color: const Color(0xFFFFD22A),
@@ -229,7 +229,7 @@ class _TelaInicialState extends State<TelaInicial> {
                               height: tamanhoMascote,
                               fit: BoxFit.contain,
                               errorBuilder: (_, __, ___) =>
-                                  AvatarMiguelito(tamanho: tamanhoMascote),
+                                  AvatarMiguelzãoo(tamanho: tamanhoMascote),
                             ),
                             SizedBox(height: compacto ? 8 : 18),
                             Row(
@@ -346,7 +346,7 @@ class TelaModoJogo extends StatelessWidget {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        ConfiguracoesJogo.instancia.idioma == 'pt-BR' ? 'O Miguelito está pronto para a aventura!' : 'Miguelito is ready for adventure!',
+                        ConfiguracoesJogo.instancia.idioma == 'pt-BR' ? 'O Miguelzãoo está pronto para a aventura!' : 'Miguelzãoo is ready for adventure!',
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 16),
                       ),
@@ -579,7 +579,7 @@ class TelaNivel extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           const Text(
-            '🤖 O Miguelito vai torcer por você!',
+            '🤖 O Miguelzãoo vai torcer por você!',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 18),
           ),
@@ -632,7 +632,7 @@ class TelaMatematica extends StatefulWidget {
 }
 
 class _TelaMatematicaState extends State<TelaMatematica> {
-  final FlutterTts _vozMiguelito = FlutterTts();
+  final FlutterTts _vozMiguelzãoo = FlutterTts();
 
   Future<void> _falarPergunta() async {
     if (!ConfiguracoesJogo.instancia.instrucoesAudio) return;
@@ -664,17 +664,17 @@ class _TelaMatematicaState extends State<TelaMatematica> {
         ? '$nome, ${ingles ? 'let’s go!' : 'vamos lá!'} $pergunta $alternativas'
         : '${ingles ? 'Let’s go!' : 'Vamos lá!'} $pergunta $alternativas';
 
-    await _vozMiguelito.stop();
-    await VozMiguelito.configurar(_vozMiguelito);
+    await _vozMiguelzãoo.stop();
+    await VozMiguelzãoo.configurar(_vozMiguelzãoo);
 
     if (!mounted || indiceAtual != _indice || _selecionada != null) return;
-    await _vozMiguelito.speak(mensagem);
+    await _vozMiguelzãoo.speak(mensagem);
   }
 
   @override
   void dispose() {
     _cronometroTimer?.cancel();
-    _vozMiguelito.stop();
+    _vozMiguelzãoo.stop();
     super.dispose();
   }
 
@@ -870,11 +870,11 @@ class _TelaMatematicaState extends State<TelaMatematica> {
             ? 'Parabéns! ${saudacao}Você acertou! Muito bem!'
             : 'Não foi dessa vez, ${saudacao}a resposta correta é $respostaCorreta. Continue tentando!');
 
-    await _vozMiguelito.stop();
+    await _vozMiguelzãoo.stop();
     if (!mounted || indiceRespondido != _indice) return;
-    await VozMiguelito.configurar(_vozMiguelito);
+    await VozMiguelzãoo.configurar(_vozMiguelzãoo);
     if (!mounted || indiceRespondido != _indice) return;
-    await _vozMiguelito.speak(mensagem);
+    await _vozMiguelzãoo.speak(mensagem);
   }
 
   void _proxima() {
@@ -969,7 +969,7 @@ class _TelaMatematicaState extends State<TelaMatematica> {
                     child: Column(
                       children: [
                         const Text(
-                          '🤖 Miguelito pergunta:',
+                          '🤖 Miguelzãoo pergunta:',
                           style: TextStyle(fontSize: 20),
                         ),
                         const SizedBox(height: 20),
@@ -1220,17 +1220,17 @@ class _TelaIdentificacaoState extends State<TelaIdentificacao> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    _idioma == 'pt-BR' ? '🌟 Olá! Bem-vindo ao Miguelito!' : '🌟 Welcome to Miguelito!',
+                    _idioma == 'pt-BR' ? '🌟 Olá! Bem-vindo ao Miguelzãoo!' : '🌟 Welcome to Miguelzãoo!',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
-                  // O fundo de boas-vindas já contém o Miguelito.
+                  // O fundo de boas-vindas já contém o Miguelzãoo.
                   // Não duplicar o mascote por cima da arte.
 
                   const SizedBox(height: 12),
                   Text(
-                    _idioma == 'pt-BR' ? 'Olá! Eu sou o Miguelito!\nComo você se chama?' : 'Hi! I am Miguelito!\nWhat is your name?',
+                    _idioma == 'pt-BR' ? 'Olá! Eu sou o Miguelzãoo!\nComo você se chama?' : 'Hi! I am Miguelzãoo!\nWhat is your name?',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 20),
                   ),
