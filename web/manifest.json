@@ -1,11 +1,11 @@
 {
-  "name": "Miguelito",
-  "short_name": "Miguelito",
+  "name": "Miguelzãoo",
+  "short_name": "Miguelzãoo",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#FFF6DB",
   "theme_color": "#F4C542",
-  "description": "Miguelito: jogos educativos com matemática, leitura, memória, cores e atividades acessíveis em português e inglês.",
+  "description": "Miguelzãoo: jogos educativos com matemática, leitura, memória, cores e atividades acessíveis em português e inglês.",
   "orientation": "portrait-primary",
   "prefer_related_applications": false,
   "icons": [
