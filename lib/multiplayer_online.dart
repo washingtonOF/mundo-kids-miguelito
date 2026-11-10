@@ -141,19 +141,12 @@ class ServicoMultiplayer {
     }
     final usuario = await _usuarioAutenticado();
     final referencia = sala(codigo);
-    final consulta = await referencia.get();
-    if (!consulta.exists || consulta.value is! Map) {
-      throw StateError('Sala não encontrada.');
-    }
-    final dados = Map<String, dynamic>.from(consulta.value as Map);
-    if (dados['status'] != 'aguardando') {
-      throw StateError('Esta sala não está recebendo jogadores.');
-    }
-    final vagas = dados['vagas'] is Map
-        ? Map<String, dynamic>.from(dados['vagas'] as Map)
-        : <String, dynamic>{};
-    for (final item in vagas.values) {
-      if (item is Map && item['uid'] == usuario.uid) return;
+    // As regras de segurança só permitem ler a sala completa depois
+    // de ingressar. Consultar apenas vagas individuais liberadas para
+    // ingresso; nunca fazer get() na sala antes de ocupar uma vaga.
+    for (var indice = 1; indice < 20; indice++) {
+      final ocupada = await referencia.child('vagas/vaga$indice').get();
+      if (ocupada.child('uid').value == usuario.uid) return;
     }
     for (var indice = 1; indice < 20; indice++) {
       final vaga = referencia.child('vagas/vaga$indice');
@@ -167,7 +160,7 @@ class ServicoMultiplayer {
       }, applyLocally: false);
       if (resultado.committed) return;
     }
-    throw StateError('Sala cheia ou não foi possível entrar.');
+    throw StateError('Não foi possível entrar. Confira o código ou as vagas disponíveis.');
   }
 }
 
