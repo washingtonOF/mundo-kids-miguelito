@@ -549,6 +549,7 @@ class _JogoQuizState extends State<JogoQuiz> {
           ),
         ),
       ),
+      ),
     );
   }
 }
