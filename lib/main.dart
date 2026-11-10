@@ -705,51 +705,248 @@ class TelaNivel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final reduzirMovimento = MediaQuery.of(context).disableAnimations;
     return Scaffold(
+      backgroundColor: const Color(0xFF0B5FB5),
       appBar: AppBar(
-        actions: const [BotoesNavegacao()],title: const Text('🔢 Matemática')),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          const Text(
-            'Escolha seu nível!',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+        title: const Text('🔢 Laboratório de Matemática'),
+        actions: const [BotoesNavegacao()],
+        backgroundColor: const Color(0xFFEDF9FF),
+        foregroundColor: const Color(0xFF153A73),
+      ),
+      body: Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFF0874D1), Color(0xFF20A8E7), Color(0xFFB5EDFF)],
           ),
-          const SizedBox(height: 12),
-          const Text(
-            '🤖 O Miguelzãoo vai torcer por você!',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 18),
-          ),
-          const SizedBox(height: 28),
-          for (final nivel in Nivel.values)
-            Card(
-              margin: const EdgeInsets.only(bottom: 16),
-              child: ListTile(
-                contentPadding: const EdgeInsets.all(18),
-                leading: Text(
-                  nivel.emoji,
-                  style: const TextStyle(fontSize: 30),
-                ),
-                title: Text(
-                  nivel.titulo,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
+        ),
+        child: SafeArea(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 560),
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(18, 22, 18, 30),
+                children: [
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.science_rounded, color: Color(0xFFFFE475), size: 36),
+                      SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          'MISSÃO MATEMÁTICA',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1,
+                            shadows: [Shadow(color: Color(0xFF15528D), blurRadius: 5)],
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Icon(Icons.auto_awesome, color: Color(0xFFFFE475), size: 30),
+                    ],
                   ),
-                ),
-                subtitle: Text(nivel.descricao),
-                trailing: const Icon(Icons.play_arrow),
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => TelaMatematica(nivel: nivel),
+                  const SizedBox(height: 14),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(24),
+                      boxShadow: const [
+                        BoxShadow(color: Color(0x33004D90), blurRadius: 15, offset: Offset(0, 7)),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 88,
+                          height: 92,
+                          child: Image.asset(
+                            'Menino feliz com tablet azul.png',
+                            fit: BoxFit.contain,
+                            errorBuilder: (_, __, ___) => const Icon(
+                              Icons.science_rounded, size: 64, color: Color(0xFF1979C9),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Escolha seu nível!',
+                                style: TextStyle(
+                                  fontSize: 23,
+                                  fontWeight: FontWeight.w900,
+                                  color: Color(0xFF25316B),
+                                ),
+                              ),
+                              SizedBox(height: 5),
+                              Text(
+                                'Cada desafio é uma nova descoberta. Qual missão vamos começar?',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  height: 1.3,
+                                  color: Color(0xFF455477),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 20),
+                  for (final nivel in Nivel.values)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 13),
+                      child: _CartaoNivel(
+                        nivel: nivel,
+                        reduzirMovimento: reduzirMovimento,
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => TelaMatematica(nivel: nivel),
+                          ),
+                        ),
+                      ),
+                    ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    '⭐ Aprenda no seu ritmo. O importante é se divertir!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Color(0xFF164879),
+                      fontWeight: FontWeight.w800,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
               ),
             ),
-        ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CartaoNivel extends StatefulWidget {
+  final Nivel nivel;
+  final bool reduzirMovimento;
+  final VoidCallback onTap;
+
+  const _CartaoNivel({
+    required this.nivel,
+    required this.reduzirMovimento,
+    required this.onTap,
+  });
+
+  @override
+  State<_CartaoNivel> createState() => _CartaoNivelState();
+}
+
+class _CartaoNivelState extends State<_CartaoNivel> {
+  bool _pressionado = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final nivel = widget.nivel;
+    final cor = switch (nivel) {
+      Nivel.facil => const Color(0xFF198A51),
+      Nivel.medio => const Color(0xFFBF7C00),
+      Nivel.desafio => const Color(0xFFC24454),
+    };
+    final icone = switch (nivel) {
+      Nivel.facil => Icons.eco_rounded,
+      Nivel.medio => Icons.bolt_rounded,
+      Nivel.desafio => Icons.rocket_launch_rounded,
+    };
+    final subtitulo = switch (nivel) {
+      Nivel.facil => 'MISSÃO 01 · EXPLORADOR',
+      Nivel.medio => 'MISSÃO 02 · INVENTOR',
+      Nivel.desafio => 'MISSÃO 03 · CIENTISTA',
+    };
+    return AnimatedScale(
+      scale: _pressionado && !widget.reduzirMovimento ? 0.98 : 1,
+      duration: const Duration(milliseconds: 130),
+      child: Material(
+        color: Colors.white,
+        elevation: 5,
+        shadowColor: const Color(0x66014C88),
+        borderRadius: BorderRadius.circular(23),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(23),
+          onTap: widget.onTap,
+          onHighlightChanged: (valor) {
+            if (mounted) setState(() => _pressionado = valor);
+          },
+          child: Container(
+            constraints: const BoxConstraints(minHeight: 112),
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(23),
+              border: Border(left: BorderSide(color: cor, width: 7)),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 65,
+                  height: 65,
+                  decoration: BoxDecoration(
+                    color: cor.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(19),
+                  ),
+                  child: Icon(icone, size: 36, color: cor),
+                ),
+                const SizedBox(width: 13),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        subtitulo,
+                        style: TextStyle(
+                          fontSize: 10,
+                          letterSpacing: 0.7,
+                          color: cor,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        nivel.titulo,
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w900,
+                          color: Color(0xFF25316B),
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        nivel.descricao,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Color(0xFF485475),
+                          height: 1.25,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 7),
+                Icon(Icons.arrow_circle_right_rounded, color: cor, size: 32),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
