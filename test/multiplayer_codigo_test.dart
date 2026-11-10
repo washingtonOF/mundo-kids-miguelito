@@ -8,6 +8,22 @@ void main() {
     expect(ServicoMultiplayer.codigoValido(' abc234 '), isTrue);
   });
 
+  test('Rejeita tentativas de injeção de caminho Firebase nos convites', () {
+    for (final codigo in [
+      '../ABC234',
+      'ABC234/vagas',
+      'ABC.34',
+      'ABC#34',
+      'ABC[34',
+      'ABC]34',
+      'ABC$34',
+      'ABC234?admin=true',
+    ]) {
+      expect(ServicoMultiplayer.codigoValido(codigo), isFalse,
+          reason: 'Código malformado aceito: $codigo');
+    }
+  });
+
   test('Normaliza convites copiados ou digitados', () {
     expect(ServicoMultiplayer.normalizarCodigo(' abc234 '), 'ABC234');
   });
