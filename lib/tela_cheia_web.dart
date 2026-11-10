@@ -7,3 +7,7 @@ Future<void> alternarTelaCheia(bool ativar) async {
     html.document.exitFullscreen();
   }
 }
+
+Future<void> abrirCentralJogos() async {
+  html.window.location.assign('https://washingtonof.github.io/jogos/');
+}
