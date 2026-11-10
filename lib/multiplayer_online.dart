@@ -58,8 +58,12 @@ class ServicoMultiplayer {
 
     // A criação usa set(), pois transações exigem leitura prévia.
     // O Firebase só autoriza criar uma sala ainda inexistente.
-    final codigo = _gerarCodigo();
-    await sala(codigo).set({
+    // Colisões são raras, mas não devem impedir a criação de uma sala.
+    // A regra do Firebase só permite gravar códigos ainda inexistentes.
+    for (var tentativa = 0; tentativa < 5; tentativa++) {
+      final codigo = _gerarCodigo();
+      try {
+        await sala(codigo).set({
       'criador': usuario.uid,
       'status': 'aguardando',
       'maxJogadores': 20,
@@ -69,8 +73,16 @@ class ServicoMultiplayer {
       'vagas': {
         'vaga0': {'uid': usuario.uid, 'nome': nome, 'pontos': 0},
       },
-    });
-    return codigo;
+        });
+        return codigo;
+      } on FirebaseException catch (erro) {
+        // Uma colisão pode gerar permission-denied; outras recusas de
+        // permissão também chegam com esse código. Limitar tentativas.
+        if (erro.code != 'permission-denied') rethrow;
+        if (tentativa == 4) rethrow;
+      }
+    }
+    throw StateError('Não foi possível criar a sala. Tente novamente.');
   }
 
   /// Apenas o criador pode iniciar, com pelo menos dois participantes.
@@ -384,12 +396,64 @@ class _TelaMultiplayerOnlineState extends State<TelaMultiplayerOnline> {
   }
 }
 
-class TelaEsperaMultiplayer extends StatelessWidget {
+class TelaEsperaMultiplayer extends StatefulWidget {
   final String codigo;
   const TelaEsperaMultiplayer({super.key, required this.codigo});
 
   @override
+  State<TelaEsperaMultiplayer> createState() => _TelaEsperaMultiplayerState();
+}
+
+class _TelaEsperaMultiplayerState extends State<TelaEsperaMultiplayer> {
+  late Stream<DatabaseEvent> _salaStream;
+  bool _navegandoParaPartida = false;
+  StreamSubscription<DatabaseEvent>? _conexao;
+  bool? _conectado;
+
+  void _acompanharConexao() {
+    _conexao?.cancel();
+    _conexao = FirebaseDatabase.instanceFor(
+      app: FirebaseAuth.instance.app,
+      databaseURL: 'https://mundo-kids-ee4e7-default-rtdb.firebaseio.com',
+    ).ref('.info/connected').onValue.listen((evento) {
+      if (!mounted) return;
+      final conectado = evento.snapshot.value == true;
+      if (_conectado != conectado) {
+        setState(() => _conectado = conectado);
+      }
+    }, onError: (Object erro) {
+      if (mounted) setState(() => _conectado = false);
+    });
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    _salaStream = ServicoMultiplayer.sala(widget.codigo).onValue;
+    _acompanharConexao();
+  }
+
+  @override
+  void didUpdateWidget(covariant TelaEsperaMultiplayer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.codigo != widget.codigo) {
+      _salaStream = ServicoMultiplayer.sala(widget.codigo).onValue;
+      _navegandoParaPartida = false;
+      _conectado = null;
+      _acompanharConexao();
+    }
+  }
+
+  @override
+  void dispose() {
+    _conexao?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final codigo = widget.codigo;
     return Scaffold(
       appBar: AppBar(
         title: const Text('🏆 Sala de espera'),
@@ -400,8 +464,23 @@ class TelaEsperaMultiplayer extends StatelessWidget {
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
             child: _painel(
-              child: StreamBuilder<DatabaseEvent>(
-                stream: ServicoMultiplayer.sala(codigo).onValue,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (_conectado == false)
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 12),
+                      child: Text(
+                        'Conexão perdida. Aguardando reconexão...',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color(0xFF9B431B),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  StreamBuilder<DatabaseEvent>(
+                stream: _salaStream,
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
                     return const Text(
@@ -431,13 +510,15 @@ class TelaEsperaMultiplayer extends StatelessWidget {
                   final anfitriao = dados['criador'] ==
                       FirebaseAuth.instance.currentUser?.uid;
                   if (iniciado) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      if (context.mounted) {
+                    if (!_navegandoParaPartida) {
+                      _navegandoParaPartida = true;
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (!mounted) return;
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
                           builder: (_) => TelaCampeonatoMultiplayer(codigo: codigo),
                         ));
-                      }
-                    });
+                      });
+                    }
                     return const CircularProgressIndicator();
                   }
                   // Convidados veem apenas a sala de espera, sem QR Code
@@ -669,6 +750,8 @@ class TelaEsperaMultiplayer extends StatelessWidget {
                     ],
                   );
                 },
+                  ),
+                ],
               ),
             ),
           ),
