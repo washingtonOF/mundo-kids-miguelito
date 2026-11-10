@@ -1248,153 +1248,330 @@ class _TelaMatematicaState extends State<TelaMatematica> {
     final respondida = _selecionada != null;
     final acertou = _selecionada == pergunta.correta;
     final modoTranquilo = ConfiguracoesJogo.instancia.modoTranquilo;
+    final ingles = ConfiguracoesJogo.instancia.idioma == 'en-US';
+    const azul = Color(0xFF25316B);
+    const roxo = Color(0xFF6B4EE6);
+    const cores = [
+      Color(0xFF7455D9),
+      Color(0xFF168C94),
+      Color(0xFFD28A23),
+      Color(0xFFC44E87),
+    ];
+
     return Scaffold(
+      backgroundColor: modoTranquilo ? const Color(0xFFF1F5F9) : const Color(0xFF0C77CC),
       appBar: AppBar(
-        actions: const [BotoesNavegacao()],title: Text('🔢 Matemática • ${widget.nivel.titulo}')),
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 650),
-            child: ListView(
-              padding: const EdgeInsets.all(20),
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Pergunta ${_indice + 1} de 10',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+        title: Text('🔢 Matemática • ${widget.nivel.titulo}'),
+        actions: const [BotoesNavegacao()],
+        backgroundColor: const Color(0xFFF3FAFF),
+      ),
+      body: Container(
+        width: double.infinity,
+        decoration: modoTranquilo
+            ? null
+            : const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Color(0xFF0B64BA), Color(0xFF1AA0E0), Color(0xFFB0EBFF)],
+                ),
+              ),
+        child: SafeArea(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 650),
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(16, 18, 16, 32),
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.science_rounded, color: Color(0xFFFFE475), size: 27),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          ingles ? 'MATH LAB' : 'LABORATÓRIO DOS DESAFIOS',
+                          style: TextStyle(
+                            color: modoTranquilo ? azul : Colors.white,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
                       ),
-                    ),
-                    Text(
-                      '⭐ $_pontos pontos',
-                      style: const TextStyle(fontSize: 18),
-                    ),
-                  ],
-                ),
-                if (ConfiguracoesJogo.instancia.instrucoesAudio)
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton.icon(
-                      onPressed: respondida
-                          ? () => _falarResultado(acertou)
-                          : _falarPergunta,
-                      icon: const Icon(Icons.volume_up),
-                      label: Text(ConfiguracoesJogo.instancia.idioma == 'en-US'
-                          ? (respondida ? 'Hear feedback again' : 'Hear question and options')
-                          : (respondida ? 'Ouvir resultado novamente' : 'Ouvir pergunta e alternativas')),
-                    ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.star_rounded, color: Color(0xFFD99A00), size: 22),
+                            const SizedBox(width: 4),
+                            Text('$_pontos ${ingles ? 'points' : 'pontos'}',
+                                style: const TextStyle(color: azul, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                const SizedBox(height: 12),
-                LinearProgressIndicator(
-                  value: (_indice + 1) / 10,
-                  minHeight: 10,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                const SizedBox(height: 30),
-                Card(
-                  color: modoTranquilo
-                      ? const Color(0xFFF1F5F9)
-                      : const Color(0xFFE8E0FF),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 35,
-                      horizontal: 12,
+                  const SizedBox(height: 18),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        ingles ? 'Question ${_indice + 1} of 10' : 'Pergunta ${_indice + 1} de 10',
+                        style: TextStyle(
+                          color: modoTranquilo ? azul : Colors.white,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 16,
+                        ),
+                      ),
+                      Text(
+                        '${(_indice + 1) * 10}%',
+                        style: TextStyle(
+                          color: modoTranquilo ? azul : Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 9),
+                  LinearProgressIndicator(
+                    value: (_indice + 1) / 10,
+                    minHeight: 11,
+                    borderRadius: BorderRadius.circular(20),
+                    backgroundColor: const Color(0xFFB6D6E8),
+                    color: const Color(0xFFFFD65C),
+                  ),
+                  const SizedBox(height: 18),
+                  Container(
+                    padding: const EdgeInsets.all(18),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(25),
+                      boxShadow: const [
+                        BoxShadow(color: Color(0x33013C79), blurRadius: 14, offset: Offset(0, 6)),
+                      ],
                     ),
                     child: Column(
                       children: [
-                        const Text(
-                          '🤖 Miguelzãoo pergunta:',
-                          style: TextStyle(fontSize: 20),
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: 75,
+                              height: 82,
+                              child: Image.asset(
+                                'Menino feliz com tablet azul.png',
+                                fit: BoxFit.contain,
+                                errorBuilder: (_, __, ___) =>
+                                    const Icon(Icons.science_rounded, color: roxo, size: 53),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    ingles ? 'MIGUELZÃOO ASKS' : 'MIGUELZÃOO PERGUNTA',
+                                    style: const TextStyle(
+                                      color: roxo,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    ingles ? 'Can you solve this challenge?' : 'Vamos resolver esse desafio?',
+                                    style: const TextStyle(color: Color(0xFF485475), fontSize: 14),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 20),
-                        Text(
-                          pergunta.enunciado,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 42,
-                            fontWeight: FontWeight.bold,
+                        const SizedBox(height: 13),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 25),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFEFF6FF),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Column(
+                            children: [
+                              Text(
+                                ingles ? 'How much is' : 'Quanto é',
+                                style: const TextStyle(color: azul, fontSize: 15),
+                              ),
+                              const SizedBox(height: 8),
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  pergunta.enunciado,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    color: azul,
+                                    fontSize: 45,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 20),
-
-                        if (ConfiguracoesJogo.instancia.instrucoesAudio)
+                        if (ConfiguracoesJogo.instancia.instrucoesAudio) ...[
+                          const SizedBox(height: 16),
                           FilledButton.icon(
-                            onPressed: _falarPergunta,
-                            icon: const Icon(Icons.volume_up),
-                            label: const Text('🔊 Ouvir pergunta e alternativas'),
+                            onPressed: respondida
+                                ? () => _falarResultado(acertou)
+                                : _falarPergunta,
+                            style: FilledButton.styleFrom(
+                              backgroundColor: roxo,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 13),
+                            ),
+                            icon: const Icon(Icons.volume_up_rounded),
+                            label: Text(ingles
+                                ? (respondida ? 'Hear feedback' : 'Hear question and answers')
+                                : (respondida ? 'Ouvir resultado' : 'Ouvir pergunta e alternativas')),
                           ),
+                        ],
                       ],
                     ),
                   ),
-                ),
-                const SizedBox(height: 22),
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 2.3,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                  ),
-                  itemCount: pergunta.alternativas.length,
-                  itemBuilder: (context, i) {
-                    final valor = pergunta.alternativas[i];
-                    final correta = valor == pergunta.correta;
-                    final erradaEscolhida =
-                        respondida && valor == _selecionada && !correta;
-                    final cor = respondida && correta
-                        ? const Color(0xFFB8F3C9)
-                        : erradaEscolhida
-                        ? const Color(0xFFFFC7C7)
-                        : Colors.white;
-                    return Material(
-                      color: cor,
-                      borderRadius: BorderRadius.circular(18),
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(18),
-                        onTap: respondida ? null : () => _responder(valor),
-                        child: Center(
-                          child: Text(
-                            '$valor',
-                            style: const TextStyle(
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold,
+                  const SizedBox(height: 20),
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 1.75,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                    ),
+                    itemCount: pergunta.alternativas.length,
+                    itemBuilder: (context, i) {
+                      final valor = pergunta.alternativas[i];
+                      final correta = valor == pergunta.correta;
+                      final erradaEscolhida = respondida && valor == _selecionada && !correta;
+                      final cor = respondida && correta
+                          ? const Color(0xFFB8F3C9)
+                          : erradaEscolhida
+                              ? const Color(0xFFFFC7C7)
+                              : Colors.white;
+                      return Material(
+                        color: cor,
+                        elevation: 3,
+                        shadowColor: const Color(0x33013C79),
+                        borderRadius: BorderRadius.circular(22),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(22),
+                          onTap: respondida ? null : () => _responder(valor),
+                          child: Padding(
+                            padding: const EdgeInsets.all(13),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                      decoration: BoxDecoration(
+                                        color: cores[i % cores.length],
+                                        borderRadius: BorderRadius.circular(9),
+                                      ),
+                                      child: Text(
+                                        String.fromCharCode(65 + i),
+                                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900),
+                                      ),
+                                    ),
+                                    Icon(
+                                      respondida && correta
+                                          ? Icons.check_circle_rounded
+                                          : erradaEscolhida
+                                              ? Icons.cancel_rounded
+                                              : Icons.radio_button_unchecked_rounded,
+                                      color: respondida && correta
+                                          ? const Color(0xFF168A4E)
+                                          : erradaEscolhida
+                                              ? const Color(0xFFC24454)
+                                              : const Color(0xFFB9C3D4),
+                                    ),
+                                  ],
+                                ),
+                                Flexible(
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(
+                                      '$valor',
+                                      style: const TextStyle(
+                                        fontSize: 35,
+                                        fontWeight: FontWeight.w900,
+                                        color: azul,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                              ],
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(height: 22),
-                if (respondida) ...[
-                  Text(
-                    acertou
-                        ? '🎉 Muito bem! Você acertou!'
-                        : '💪 Boa tentativa! A resposta é ${pergunta.correta}.',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                      );
+                    },
                   ),
                   const SizedBox(height: 18),
-                  FilledButton(
-                    onPressed: _proxima,
-                    style: FilledButton.styleFrom(
-                      padding: const EdgeInsets.all(18),
+                  if (respondida) ...[
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: acertou ? const Color(0xFFDEFFE9) : const Color(0xFFFFF2DD),
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      child: Text(
+                        acertou
+                            ? (ingles ? '🎉 Great job! Correct!' : '🎉 Muito bem! Você acertou!')
+                            : (ingles
+                                ? '💪 Nice try! The answer is ${pergunta.correta}.'
+                                : '💪 Boa tentativa! A resposta é ${pergunta.correta}.'),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: azul, fontSize: 18, fontWeight: FontWeight.w900),
+                      ),
                     ),
-                    child: Text(
-                      _indice == 9 ? 'VER RESULTADO 🏆' : 'PRÓXIMA PERGUNTA ➡️',
-                      style: const TextStyle(fontSize: 17),
+                    const SizedBox(height: 14),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton.icon(
+                        onPressed: _proxima,
+                        icon: Icon(_indice == 9 ? Icons.emoji_events_rounded : Icons.arrow_forward_rounded),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: const Color(0xFF168A4E),
+                          padding: const EdgeInsets.all(18),
+                        ),
+                        label: Text(
+                          _indice == 9
+                              ? (ingles ? 'SEE RESULTS' : 'VER RESULTADO')
+                              : (ingles ? 'NEXT QUESTION' : 'PRÓXIMA PERGUNTA'),
+                          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+                        ),
+                      ),
                     ),
-                  ),
+                  ] else
+                    Text(
+                      ingles ? '✨ Every answer is a discovery!' : '✨ Cada resposta é uma descoberta!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: modoTranquilo ? azul : Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
                 ],
-              ],
+              ),
             ),
           ),
         ),
