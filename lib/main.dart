@@ -4,6 +4,7 @@
 // Mensagem reservada ao código-fonte; não exibir na interface.
 
 import 'dart:math';
+import 'controles_janela.dart';
 
 import 'package:flutter/material.dart';
 
@@ -59,6 +60,7 @@ class MundoKidsApp extends StatelessWidget {
         ),
         scaffoldBackgroundColor: const Color(0xFFFFF6DB),
       ),
+      builder: (context, child) => ControlesJanela(child: child ?? const SizedBox.shrink()),
       initialRoute: '/',
       routes: {'/': (context) {
         final codigo = Uri.base.queryParameters['sala']?.trim().toUpperCase();
