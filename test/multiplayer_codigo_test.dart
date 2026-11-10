@@ -16,7 +16,7 @@ void main() {
       'ABC#34',
       'ABC[34',
       'ABC]34',
-      'ABC$34',
+      r'ABC$34',
       'ABC234?admin=true',
     ]) {
       expect(ServicoMultiplayer.codigoValido(codigo), isFalse,
