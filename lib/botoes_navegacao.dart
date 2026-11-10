@@ -1,9 +1,37 @@
 import 'package:flutter/material.dart';
 
-/// Atalho compacto para a tela inicial do Miguelzãoo.
-/// Preserva a navegação do sistema e evita empilhar telas duplicadas.
+/// Atalho para o início do Miguelzãoo. Durante atividades em andamento,
+/// pede confirmação para evitar perda acidental do progresso.
 class BotoesNavegacao extends StatelessWidget {
-  const BotoesNavegacao({super.key});
+  final bool confirmarSaida;
+  const BotoesNavegacao({super.key, this.confirmarSaida = false});
+
+  Future<void> _voltarInicio(BuildContext context) async {
+    if (confirmarSaida) {
+      final sair = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('Sair da atividade?'),
+          content: const Text(
+            'Seu progresso nesta partida será perdido. Deseja voltar ao início?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Continuar jogando'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text('Sair'),
+            ),
+          ],
+        ),
+      );
+      if (sair != true) return;
+    }
+    if (!context.mounted) return;
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +42,7 @@ class BotoesNavegacao extends StatelessWidget {
         visualDensity: VisualDensity.compact,
         iconSize: 23,
         icon: const Icon(Icons.home_rounded),
-        onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst),
+        onPressed: () => _voltarInicio(context),
       ),
     );
   }
