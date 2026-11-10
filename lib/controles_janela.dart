@@ -18,8 +18,8 @@ class _ControlesJanelaState extends State<ControlesJanela>
     super.initState();
     _pulso = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1100),
-      lowerBound: 0.65,
+      duration: const Duration(milliseconds: 1250),
+      lowerBound: 0.45,
       upperBound: 1,
     )..repeat(reverse: true);
   }
@@ -81,26 +81,27 @@ class _ControlesJanelaState extends State<ControlesJanela>
                   opacity: reduzirMovimento ? 1 : _pulso.value,
                   child: child,
                 ),
-                child: FilledButton.icon(
+                child: OutlinedButton.icon(
                   onPressed: _maximizar,
-                  icon: Icon(_telaCheia ? Icons.fullscreen_exit : Icons.fullscreen),
-                  label: Text(_telaCheia ? 'RESTAURAR' : 'MAXIMIZAR'),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFFFFC928),
-                    foregroundColor: const Color(0xFF172C58),
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    minimumSize: const Size(0, 42),
+                  icon: Icon(
+                    _telaCheia ? Icons.fullscreen_exit_rounded : Icons.fullscreen_rounded,
+                    size: 18,
                   ),
-                ),
-              ),
-              const SizedBox(width: 6),
-              IconButton.filled(
-                tooltip: 'Fechar jogo',
-                onPressed: _fechar,
-                icon: const Icon(Icons.close),
-                style: IconButton.styleFrom(
-                  backgroundColor: const Color(0xFFD83C42),
-                  foregroundColor: Colors.white,
+                  label: Text(
+                    _telaCheia ? 'RESTAURAR' : 'TELA CHEIA',
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: const Color(0xEAF8FAFF),
+                    foregroundColor: const Color(0xFF5946A5),
+                    side: const BorderSide(color: Color(0x886B4EE6)),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    minimumSize: const Size(0, 34),
+                    visualDensity: VisualDensity.compact,
+                  ),
                 ),
               ),
             ]),
