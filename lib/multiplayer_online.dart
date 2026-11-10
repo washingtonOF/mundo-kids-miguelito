@@ -845,8 +845,6 @@ class _TelaCampeonatoMultiplayerState extends State<TelaCampeonatoMultiplayer> {
         }
         return;
       }
-      debugPrint('MUNDO_KIDS resposta: sala=${widget.codigo}, rodada=$indice, '
-          'alternativa=$alternativa, rodadaLocal=$rodadaLocal');
              await resposta.set({
          'alternativa': alternativa,
          'respondidoEm': ServerValue.timestamp,
@@ -855,7 +853,7 @@ class _TelaCampeonatoMultiplayerState extends State<TelaCampeonatoMultiplayer> {
       debugPrint('MUNDO_KIDS erro ao responder: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Não foi possível registrar a resposta: $e')),
+          const SnackBar(content: Text('Não foi possível registrar a resposta. Verifique a conexão e tente novamente.')),
         );
       }
     } finally {
