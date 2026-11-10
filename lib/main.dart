@@ -1214,113 +1214,146 @@ class _TelaIdentificacaoState extends State<TelaIdentificacao> {
 
   @override
   Widget build(BuildContext context) {
+    final ingles = _idioma == 'en-US';
     return Scaffold(
       body: Container(
         width: double.infinity,
         height: double.infinity,
         decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/fundo_boas_vindas.png'),
-            fit: BoxFit.cover,
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFF1099EF), Color(0xFF76D8FF), Color(0xFFE4F9FF)],
           ),
         ),
         child: SafeArea(
-          child: SingleChildScrollView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
-            child: Center(
-              child: Container(
-              constraints: const BoxConstraints(maxWidth: 400),
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.88),
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.15),
-                    blurRadius: 20,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    _idioma == 'pt-BR' ? '🌟 Olá! Bem-vindo ao Miguelzãoo!' : '🌟 Welcome to Miguelzãoo!',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 10),
-                  // O fundo de boas-vindas já contém o Miguelzãoo.
-                  // Não duplicar o mascote por cima da arte.
-
-                  const SizedBox(height: 12),
-                  Text(
-                    _idioma == 'pt-BR' ? 'Olá! Eu sou o Miguelzãoo!\nComo você se chama?' : 'Hi! I am Miguelzãoo!\nWhat is your name?',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  const SizedBox(height: 18),
-                  SegmentedButton<String>(
-                    segments: const [
-                      ButtonSegment(value: 'pt-BR', label: Text('🇧🇷 Português')),
-                      ButtonSegment(value: 'en-US', label: Text('🇺🇸 English')),
-                    ],
-                    selected: {_idioma},
-                    onSelectionChanged: (v) => _mudarIdioma(v.first),
-                  ),
-                  const SizedBox(height: 24),
-
-                  Center(
-                    child: SizedBox(
-                      width: 300,
-                      child: TextField(
-                        controller: _nomeController,
-                        maxLength: 30,
-                        textCapitalization: TextCapitalization.words,
-                        decoration: InputDecoration(
-                          labelText: _idioma == 'pt-BR' ? 'Seu primeiro nome' : 'Your first name',
-                          hintText: _idioma == 'pt-BR' ? 'Digite seu nome aqui' : 'Enter your name',
-                          prefixIcon: const Icon(
-                            Icons.person,
-                            color: Color(0xFF6F42C1),
-                          ),
-                          filled: true,
-                          fillColor: Colors.white,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 18,
-                            vertical: 18,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide: const BorderSide(
-                              color: Color(0xFF6F42C1),
-                              width: 2,
-                            ),
+          child: LayoutBuilder(
+            builder: (context, size) {
+              final pequeno = size.maxHeight < 650;
+              return SingleChildScrollView(
+                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 440),
+                    child: Column(
+                      children: [
+                        Text(
+                          'Miguelzãoo',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: pequeno ? 38 : 48,
+                            fontWeight: FontWeight.w900,
+                            color: const Color(0xFFFFD32B),
+                            shadows: const [
+                              Shadow(color: Color(0xFF074CA7), offset: Offset(2, 4), blurRadius: 4),
+                            ],
                           ),
                         ),
-                      ),
+                        const SizedBox(height: 4),
+                        Text(
+                          ingles ? 'Learning Through Play' : 'Aprender Brincando',
+                          style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w800),
+                        ),
+                        SizedBox(height: pequeno ? 8 : 16),
+                        // Mascote em área própria: não fica atrás do título ou do formulário.
+                        SizedBox(
+                          height: pequeno ? 130 : 200,
+                          child: Image.asset(
+                            'Menino feliz com tablet azul.png',
+                            fit: BoxFit.contain,
+                            semanticLabel: ingles ? 'Miguelzãoo using a tablet' : 'Miguelzãoo usando um tablet',
+                            errorBuilder: (_, __, ___) => const AvatarMiguelito(tamanho: 150),
+                          ),
+                        ),
+                        SizedBox(height: pequeno ? 8 : 16),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 24),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.97),
+                            borderRadius: BorderRadius.circular(28),
+                            boxShadow: const [
+                              BoxShadow(color: Color(0x33075E9B), blurRadius: 22, offset: Offset(0, 9)),
+                            ],
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                ingles ? '🌟 Welcome, explorer!' : '🌟 Olá, explorador!',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Color(0xFF153A79),
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                ingles ? 'What is your first name?' : 'Como você se chama?',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(color: Color(0xFF395577), fontSize: 17),
+                              ),
+                              const SizedBox(height: 18),
+                              SegmentedButton<String>(
+                                segments: const [
+                                  ButtonSegment(value: 'pt-BR', label: Text('🇧🇷 Português')),
+                                  ButtonSegment(value: 'en-US', label: Text('🇺🇸 English')),
+                                ],
+                                selected: {_idioma},
+                                onSelectionChanged: (v) => _mudarIdioma(v.first),
+                              ),
+                              const SizedBox(height: 18),
+                              TextField(
+                                controller: _nomeController,
+                                maxLength: 30,
+                                textCapitalization: TextCapitalization.words,
+                                textInputAction: TextInputAction.done,
+                                onSubmitted: (_) => _salvarNome(),
+                                decoration: InputDecoration(
+                                  labelText: ingles ? 'Your first name' : 'Seu primeiro nome',
+                                  hintText: ingles ? 'Enter your name' : 'Digite seu nome',
+                                  prefixIcon: const Icon(Icons.person_rounded, color: Color(0xFF1765D1)),
+                                  filled: true,
+                                  fillColor: const Color(0xFFF1F8FF),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(18),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              SizedBox(
+                                width: double.infinity,
+                                height: 56,
+                                child: FilledButton.icon(
+                                  onPressed: _salvarNome,
+                                  icon: const Icon(Icons.rocket_launch_rounded),
+                                  label: Text(
+                                    ingles ? 'START MY ADVENTURE' : 'COMEÇAR AVENTURA',
+                                    style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+                                  ),
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor: const Color(0xFF15B72B),
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: _salvarNome,
-                    child: Text(_idioma == 'pt-BR' ? 'Começar minha aventura! 🚀' : 'Start my adventure! 🚀'),
-                  ),
-                ], // Fecha a lista children
-              ), // Fecha a Column
-              ), // Container do formulário
-            ), // Center
-          ), // SingleChildScrollView
-        ), // SafeArea
-      ), // Container do fundo
-    ); // Scaffold
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
   }
 }
 
