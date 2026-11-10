@@ -1,3 +1,5 @@
+import 'botoes_navegacao.dart';
+import 'main.dart' show EntradaMundoKids;
 import 'dart:math' as math;
 import 'configuracoes_jogo.dart';
 import 'banco_conteudo.dart' as banco;
@@ -19,6 +21,44 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Salas online do Mundo Kids. Requer as regras do Realtime Database
 /// fornecidas separadamente, antes de testar a criação/entrada.
+/// Confirma antes de abandonar uma sala ou partida multiplayer.
+Future<void> confirmarSaidaMultiplayer(BuildContext context) async {
+  final sair = await showDialog<bool>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: const Text('Sair da partida?'),
+      content: const Text(
+        'Você voltará ao início do Miguelzãoo. Sua sala ou partida pode continuar sem você.',
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(dialogContext, false),
+          child: const Text('CONTINUAR JOGANDO'),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(dialogContext, true),
+          child: const Text('SAIR'),
+        ),
+      ],
+    ),
+  );
+  if (sair != true || !context.mounted) return;
+  Navigator.of(context).pushAndRemoveUntil(
+    MaterialPageRoute(builder: (_) => const EntradaMundoKids()),
+    (route) => false,
+  );
+}
+
+Widget _protegerSaidaMultiplayer(BuildContext context, Widget conteudo) {
+  return PopScope(
+    canPop: false,
+    onPopInvokedWithResult: (didPop, result) {
+      if (!didPop) confirmarSaidaMultiplayer(context);
+    },
+    child: conteudo,
+  );
+}
+
 class ServicoMultiplayer {
   static final FirebaseDatabase _banco = FirebaseDatabase.instanceFor(
     app: FirebaseAuth.instance.app,
@@ -323,8 +363,15 @@ class _TelaMultiplayerOnlineState extends State<TelaMultiplayerOnline> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return _protegerSaidaMultiplayer(context, Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+            tooltip: 'Voltar ao início',
+            icon: const Icon(Icons.home_rounded),
+            onPressed: () => confirmarSaidaMultiplayer(context),
+          ),
+        ],
         title: const Text('🏆 Multiplayer Online'),
         backgroundColor: Colors.white.withValues(alpha: 0.85),
       ),
@@ -380,7 +427,7 @@ class _TelaMultiplayerOnlineState extends State<TelaMultiplayerOnline> {
           ),
         ),
       ),
-    );
+    ));
   }
 }
 
@@ -390,8 +437,15 @@ class TelaEsperaMultiplayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return _protegerSaidaMultiplayer(context, Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+            tooltip: 'Voltar ao início',
+            icon: const Icon(Icons.home_rounded),
+            onPressed: () => confirmarSaidaMultiplayer(context),
+          ),
+        ],
         title: const Text('🏆 Sala de espera'),
         backgroundColor: Colors.white.withValues(alpha: 0.85),
       ),
@@ -674,7 +728,7 @@ class TelaEsperaMultiplayer extends StatelessWidget {
           ),
         ),
       ),
-    );
+    ));
   }
 }
 
@@ -1358,8 +1412,15 @@ class _TelaCampeonatoMultiplayerState extends State<TelaCampeonatoMultiplayer> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('🏆 Campeonato Miguelzãoo')),
+    return _protegerSaidaMultiplayer(context, Scaffold(
+      appBar: AppBar(actions: [
+          IconButton(
+            tooltip: 'Voltar ao início',
+            icon: const Icon(Icons.home_rounded),
+            onPressed: () => confirmarSaidaMultiplayer(context),
+          ),
+        ],
+        title: const Text('🏆 Campeonato Miguelzãoo')),
       body: _fundo(child: StreamBuilder<DatabaseEvent>(
         stream: ServicoMultiplayer.sala(widget.codigo).onValue,
         builder: (context, snap) {
@@ -1546,6 +1607,6 @@ class _TelaCampeonatoMultiplayerState extends State<TelaCampeonatoMultiplayer> {
           );
         },
       )),
-    );
+    ));
   }
 }
