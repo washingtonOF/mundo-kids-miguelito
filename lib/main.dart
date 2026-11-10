@@ -1,3 +1,4 @@
+import 'botoes_navegacao.dart';
 // Miguelzãoo — em desenvolvimento.
 // Propriedade: Washington Santos de Souza - IsamigShop.
 // Uma homenagem ao meu filho amado, Lucas Miguel.
@@ -337,6 +338,7 @@ class TelaModoJogo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: const [BotoesNavegacao()],
         title: Text(ConfiguracoesJogo.instancia.idioma == 'pt-BR' ? '🎮 Como vamos jogar?' : '🎮 How shall we play?'),
         backgroundColor: Colors.white.withValues(alpha: 0.88),
       ),
@@ -487,6 +489,7 @@ class TelaJogos extends StatelessWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        actions: const [BotoesNavegacao()],
         title: Text(ConfiguracoesJogo.instancia.idioma == 'pt-BR' ? '🎮 Escolha uma aventura!' : '🎮 Choose an adventure!'),
         backgroundColor: Colors.white.withValues(alpha: 0.85),
       ),
@@ -597,7 +600,8 @@ class TelaNivel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('🔢 Matemática')),
+      appBar: AppBar(
+        actions: const [BotoesNavegacao()],title: const Text('🔢 Matemática')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
@@ -942,7 +946,8 @@ class _TelaMatematicaState extends State<TelaMatematica> {
     final acertou = _selecionada == pergunta.correta;
     final modoTranquilo = ConfiguracoesJogo.instancia.modoTranquilo;
     return Scaffold(
-      appBar: AppBar(title: Text('🔢 Matemática • ${widget.nivel.titulo}')),
+      appBar: AppBar(
+        actions: const [BotoesNavegacao()],title: Text('🔢 Matemática • ${widget.nivel.titulo}')),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -1109,7 +1114,8 @@ class TelaResultado extends StatelessWidget {
         ? 'Muito bem! Continue praticando!'
         : 'Cada tentativa ajuda você a aprender!';
     return Scaffold(
-      appBar: AppBar(title: const Text('🏆 Resultado')),
+      appBar: AppBar(
+        actions: const [BotoesNavegacao()],title: const Text('🏆 Resultado')),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
