@@ -59,13 +59,8 @@ class _ControlesJanelaState extends State<ControlesJanela>
     if (_telaCheia) {
       try { await tela.alternarTelaCheia(false); } catch (_) {}
     }
-    // A página foi aberta pelo usuário: navegadores não permitem fechar a aba.
-    // Voltar para a central é o comportamento seguro e previsível.
-    // ignore: avoid_web_libraries_in_flutter
-    Navigator.of(context).pushNamedAndRemoveUntil('/', (_) => false);
-    if (mounted) ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Para sair, feche esta aba ou volte à central de jogos.')),
-    );
+    await tela.abrirCentralJogos();
+    if (mounted) Navigator.of(context).pushNamedAndRemoveUntil('/', (_) => false);
   }
 
   @override
