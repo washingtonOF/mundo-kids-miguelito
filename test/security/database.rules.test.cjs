@@ -5,7 +5,7 @@ const { initializeTestEnvironment, assertSucceeds, assertFails } = require('@fir
 
 // Exportar regras PUBLICADAS do Console para security/database.rules.json.
 // Nunca executar testes destrutivos contra o banco de produção.
-const rulesPath = 'security/database.rules.json';
+const rulesPath = 'security/database.rules.candidate.json';
 if (!fs.existsSync(rulesPath)) {
   throw new Error('Regras ausentes: exporte a versão publicada para ' + rulesPath);
 }
@@ -41,7 +41,7 @@ test('autorização de sala e vagas', async () => {
   await assertFails(db('estranho').ref(path + '/vagas/vaga1').set({
     uid: 'estranho', nome: 'Ataque', pontos: 0
   }));
-  // Teste de privacidade: deve falhar em uma implementação segura.
+  // Teste de privacidade: terceiros não podem consultar dados de vagas.
   await assertFails(db('estranho').ref(path + '/vagas/vaga1').get());
 });
 after(async () => { if (env) await env.cleanup(); });
