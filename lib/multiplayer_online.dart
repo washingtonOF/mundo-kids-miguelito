@@ -667,6 +667,7 @@ class TelaEsperaMultiplayer extends StatelessWidget {
 }
 
 /// Ícone científico com rotação contínua na sala de espera.
+/// Infinito fixo com um feixe luminoso percorrendo continuamente o traçado.
 class _IconeCientificoGiratorio extends StatefulWidget {
   const _IconeCientificoGiratorio();
 
@@ -677,35 +678,99 @@ class _IconeCientificoGiratorio extends StatefulWidget {
 
 class _IconeCientificoGiratorioState extends State<_IconeCientificoGiratorio>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _giro;
+  late final AnimationController _energia;
 
   @override
   void initState() {
     super.initState();
-    _giro = AnimationController(
+    _energia = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 5),
+      duration: const Duration(milliseconds: 2300),
     )..repeat();
   }
 
   @override
   void dispose() {
-    _giro.dispose();
+    _energia.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return RotationTransition(
-      turns: _giro,
-      child: const Icon(
-        Icons.blur_circular_rounded,
-        size: 64,
-        color: Color(0xFF6B4EE6),
-        semanticLabel: 'Símbolo científico animado',
+    final reduzirMovimento =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    return Semantics(
+      label: 'Infinito animado: aguardando o início da partida',
+      child: SizedBox(
+        width: 120,
+        height: 72,
+        child: AnimatedBuilder(
+          animation: _energia,
+          builder: (context, _) => CustomPaint(
+            painter: _PintorInfinito(
+              progresso: reduzirMovimento ? 0.2 : _energia.value,
+            ),
+          ),
+        ),
       ),
     );
   }
+}
+
+class _PintorInfinito extends CustomPainter {
+  const _PintorInfinito({required this.progresso});
+
+  final double progresso;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final sx = size.width / 120;
+    final sy = size.height / 72;
+    final caminho = Path()
+      ..moveTo(60 * sx, 36 * sy)
+      ..cubicTo(40 * sx, 3 * sy, 8 * sx, 9 * sy, 8 * sx, 36 * sy)
+      ..cubicTo(8 * sx, 63 * sy, 40 * sx, 69 * sy, 60 * sx, 36 * sy)
+      ..cubicTo(80 * sx, 3 * sy, 112 * sx, 9 * sy, 112 * sx, 36 * sy)
+      ..cubicTo(112 * sx, 63 * sy, 80 * sx, 69 * sy, 60 * sx, 36 * sy);
+
+    final trilho = Paint()
+      ..color = const Color(0x336B4EE6)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 8
+      ..strokeCap = StrokeCap.round;
+    canvas.drawPath(caminho, trilho);
+
+    final metrica = caminho.computeMetrics().first;
+    final comprimento = metrica.length;
+    final inicio = progresso * comprimento;
+    final feixe = comprimento * 0.17;
+    final brilho = Paint()
+      ..color = const Color(0xFF8054EC)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 7
+      ..strokeCap = StrokeCap.round;
+    final halo = Paint()
+      ..color = const Color(0x558054EC)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 13
+      ..strokeCap = StrokeCap.round
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5);
+
+    void desenhar(double de, double ate) {
+      final trecho = metrica.extractPath(de, ate);
+      canvas.drawPath(trecho, halo);
+      canvas.drawPath(trecho, brilho);
+    }
+
+    desenhar(inicio, (inicio + feixe).clamp(0.0, comprimento));
+    if (inicio + feixe > comprimento) {
+      desenhar(0, inicio + feixe - comprimento);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _PintorInfinito oldDelegate) =>
+      oldDelegate.progresso != progresso;
 }
 
 /// Cartão animado de participante: entra suavemente e flutua enquanto espera.
