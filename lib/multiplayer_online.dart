@@ -685,7 +685,7 @@ class _IconeCientificoGiratorioState extends State<_IconeCientificoGiratorio>
     super.initState();
     _energia = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 2300),
+      duration: const Duration(milliseconds: 3200),
     )..repeat();
   }
 
@@ -742,30 +742,25 @@ class _PintorInfinito extends CustomPainter {
 
     final metrica = caminho.computeMetrics().first;
     final comprimento = metrica.length;
-    final inicio = progresso * comprimento;
-    final feixe = comprimento * 0.17;
-    final brilho = Paint()
+    // Desenha progressivamente TODO o infinito, em vez de mover apenas
+    // um pequeno feixe sobre um contorno que parece estático.
+    final preenchido = Curves.easeInOut.transform(progresso) * comprimento;
+    final trecho = metrica.extractPath(0, preenchido);
+    final halo = Paint()
+      ..color = const Color(0x668054EC)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 14
+      ..strokeCap = StrokeCap.round
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
+    final energia = Paint()
       ..color = const Color(0xFF8054EC)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 7
-      ..strokeCap = StrokeCap.round;
-    final halo = Paint()
-      ..color = const Color(0x558054EC)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 13
+      ..strokeWidth = 8
       ..strokeCap = StrokeCap.round
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5);
+      ..strokeJoin = StrokeJoin.round;
+    canvas.drawPath(trecho, halo);
+    canvas.drawPath(trecho, energia);
 
-    void desenhar(double de, double ate) {
-      final trecho = metrica.extractPath(de, ate);
-      canvas.drawPath(trecho, halo);
-      canvas.drawPath(trecho, brilho);
-    }
-
-    desenhar(inicio, (inicio + feixe).clamp(0.0, comprimento));
-    if (inicio + feixe > comprimento) {
-      desenhar(0, inicio + feixe - comprimento);
-    }
   }
 
   @override
