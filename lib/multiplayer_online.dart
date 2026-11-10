@@ -439,6 +439,50 @@ class TelaEsperaMultiplayer extends StatelessWidget {
                     });
                     return const CircularProgressIndicator();
                   }
+                  // Convidados veem apenas a sala de espera, sem QR Code
+                  // nem controles exclusivos do anfitrião.
+                  if (!anfitriao) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.hourglass_top_rounded,
+                            size: 64, color: Color(0xFF6B4EE6)),
+                        const SizedBox(height: 18),
+                        const Text(
+                          'Você entrou na sala! 🎉',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF31235B),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        const Text(
+                          'Aguarde, vamos já começar!',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        const SizedBox(height: 18),
+                        const CircularProgressIndicator(),
+                        const SizedBox(height: 20),
+                        Text(
+                          'Jogadores na sala: ${nomes.length}',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          '🎮 ${tiposCampeonato[tipo] ?? 'Misto'} · $tempo segundos por pergunta',
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 14),
+                        const Text(
+                          'O anfitrião vai iniciar a partida. Você não precisa fazer mais nada.',
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    );
+                  }
                   return Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
