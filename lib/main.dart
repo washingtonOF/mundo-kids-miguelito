@@ -1262,7 +1262,7 @@ class _TelaMatematicaState extends State<TelaMatematica> {
       backgroundColor: modoTranquilo ? const Color(0xFFF1F5F9) : const Color(0xFF0C77CC),
       appBar: AppBar(
         title: Text('🔢 Matemática • ${widget.nivel.titulo}'),
-        actions: const [BotoesNavegacao()],
+        actions: const [BotoesNavegacao(confirmarSaida: true)],
         backgroundColor: const Color(0xFFF3FAFF),
       ),
       body: Container(
