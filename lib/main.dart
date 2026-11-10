@@ -198,7 +198,19 @@ class _TelaInicialState extends State<TelaInicial> {
                                 icon: const Icon(Icons.settings, size: 28),
                               ),
                             ),
-                            const Icon(Icons.school, size: 45, color: Color(0xFFFFDA2D)),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.20),
+                                borderRadius: BorderRadius.circular(24),
+                                border: Border.all(color: Colors.white70),
+                              ),
+                              child: Text(
+                                ingles ? '✨ LEARN • PLAY • DISCOVER' : '✨ APRENDER • BRINCAR • DESCOBRIR',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w900),
+                              ),
+                            ),
                             FittedBox(
                               fit: BoxFit.scaleDown,
                               child: Text('Miguelzãoo', style: TextStyle(
@@ -223,13 +235,28 @@ class _TelaInicialState extends State<TelaInicial> {
                                   fontSize: 20, fontWeight: FontWeight.w800)),
                             ),
                             SizedBox(height: compacto ? 4 : 14),
-                            Image.asset(
-                              'assets/images/miguelito.png',
-                              width: tamanhoMascote,
-                              height: tamanhoMascote,
-                              fit: BoxFit.contain,
-                              errorBuilder: (_, __, ___) =>
-                                  AvatarMiguelito(tamanho: tamanhoMascote),
+                            Container(
+                              width: tamanhoMascote + 48,
+                              height: tamanhoMascote + 36,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: const RadialGradient(colors: [
+                                  Color(0xFFF8FDFF), Color(0xFFB9EEFF), Color(0x0083D9FF),
+                                ]),
+                                boxShadow: [BoxShadow(
+                                  color: Colors.white.withValues(alpha: 0.35),
+                                  blurRadius: 28, spreadRadius: 5,
+                                )],
+                              ),
+                              child: Image.asset(
+                                'Menino feliz com tablet azul.png',
+                                fit: BoxFit.contain,
+                                semanticLabel: ingles
+                                    ? 'Miguelzãoo using a tablet'
+                                    : 'Miguelzãoo usando um tablet',
+                                errorBuilder: (_, __, ___) =>
+                                    AvatarMiguelito(tamanho: tamanhoMascote),
+                              ),
                             ),
                             SizedBox(height: compacto ? 8 : 18),
                             Row(
@@ -242,7 +269,7 @@ class _TelaInicialState extends State<TelaInicial> {
                             const SizedBox(height: 18),
                             SizedBox(
                               width: double.infinity,
-                              height: 68,
+                              height: 72,
                               child: FilledButton.icon(
                                 onPressed: () => Navigator.push(context,
                                   MaterialPageRoute(builder: (_) => const TelaModoJogo())),
