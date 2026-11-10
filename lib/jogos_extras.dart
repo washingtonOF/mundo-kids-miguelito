@@ -418,7 +418,7 @@ class _JogoQuizState extends State<JogoQuiz> {
     if (indice >= perguntas.length) {
       return Scaffold(
         appBar: AppBar(
-        actions: const [BotoesNavegacao()],title: Text(ingles ? '🏆 Results' : '🏆 Resultado')),
+        actions: const [BotoesNavegacao(confirmarSaida: true)],title: Text(ingles ? '🏆 Results' : '🏆 Resultado')),
         body: SafeArea(
           child: Center(
             child: SingleChildScrollView(
@@ -448,7 +448,7 @@ class _JogoQuizState extends State<JogoQuiz> {
     return Scaffold(
       backgroundColor: const Color(0xFFFFF8E5),
       appBar: AppBar(
-        actions: const [BotoesNavegacao()],title: Text(ingles ? (widget.tipo == 'Português' ? 'Portuguese' : 'Colors and shapes') : widget.tipo)),
+        actions: const [BotoesNavegacao(confirmarSaida: true)],title: Text(ingles ? (widget.tipo == 'Português' ? 'Portuguese' : 'Colors and shapes') : widget.tipo)),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 650),
@@ -644,7 +644,7 @@ class _JogoMemoriaState extends State<JogoMemoria> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
-        actions: const [BotoesNavegacao()],title: Text(ingles ? '🧠 Memory Game' : '🧠 Jogo da Memória')),
+        actions: const [BotoesNavegacao(confirmarSaida: true)],title: Text(ingles ? '🧠 Memory Game' : '🧠 Jogo da Memória')),
     body: SafeArea(
       child: Center(
       child: ConstrainedBox(
@@ -967,7 +967,7 @@ class _BatalhaEquipesState extends State<BatalhaEquipes> {
 
     return Scaffold(
       appBar: AppBar(
-        actions: const [BotoesNavegacao()],title: Text(ingles ? '🏆 Team battle' : '🏆 Batalha de equipes')),
+        actions: const [BotoesNavegacao(confirmarSaida: true)],title: Text(ingles ? '🏆 Team battle' : '🏆 Batalha de equipes')),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 700),
