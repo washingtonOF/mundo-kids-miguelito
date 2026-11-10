@@ -1,0 +1,4 @@
+{
+  "database": {"rules": "security/database.rules.json"},
+  "emulators": {"database": {"host": "127.0.0.1", "port": 9000}, "auth": {"host": "127.0.0.1", "port": 9099}}
+}
