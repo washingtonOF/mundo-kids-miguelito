@@ -446,15 +446,30 @@ class _JogoQuizState extends State<JogoQuiz> {
     final p = perguntas[indice];
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF8E5),
+      backgroundColor: const Color(0xFF0C77CC),
       appBar: AppBar(
         actions: const [BotoesNavegacao()],title: Text(ingles ? (widget.tipo == 'Português' ? 'Portuguese' : 'Colors and shapes') : widget.tipo)),
-      body: Center(
+      body: Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(gradient: LinearGradient(
+          begin: Alignment.topCenter, end: Alignment.bottomCenter,
+          colors: [Color(0xFF0B64BA), Color(0xFF1AA0E0), Color(0xFFB0EBFF)],
+        )),
+        child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 650),
           child: ListView(
             padding: const EdgeInsets.all(20),
             children: [
+              Row(children: [
+                const Icon(Icons.science_rounded, color: Color(0xFFFFE475)),
+                const SizedBox(width: 8),
+                Expanded(child: Text(widget.tipo == 'Português' ? 'LABORATÓRIO DAS PALAVRAS' : 'LABORATÓRIO DAS CORES',
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 17))),
+                const Icon(Icons.star_rounded, color: Color(0xFFFFE475)),
+                Text('$pontos', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              ]),
+              const SizedBox(height: 12),
               if (ConfiguracoesJogo.instancia.instrucoesAudio)
                 Align(
                   alignment: Alignment.centerLeft,
@@ -468,34 +483,51 @@ class _JogoQuizState extends State<JogoQuiz> {
                         : (respondeu ? 'Ouvir resultado novamente' : 'Ouvir pergunta e alternativas')),
                   ),
                 ),
-              LinearProgressIndicator(value: (indice + 1) / 10),
+              LinearProgressIndicator(value: (indice + 1) / 10, minHeight: 10,
+                borderRadius: BorderRadius.circular(20), color: const Color(0xFFFFD65C)),
               const SizedBox(height: 20),
-              Text(
-                ingles ? 'Question ${indice + 1}/10   ⭐ $pontos points' : 'Questão ${indice + 1}/10   ⭐ $pontos pontos',
-                style: const TextStyle(fontSize: 18),
-              ),
+              Text(ingles ? 'Question ${indice + 1} of 10' : 'Pergunta ${indice + 1} de 10',
+                style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 25),
-              Text(
-                p.texto,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 27,
-                  fontWeight: FontWeight.bold,
-                ),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(22),
+                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24)),
+                child: Column(children: [
+                  Row(children: [
+                    SizedBox(width: 65, height: 70, child: Image.asset('Menino feliz com tablet azul.png',
+                      fit: BoxFit.contain, errorBuilder: (_, __, ___) => const Icon(Icons.science, size: 45))),
+                    const SizedBox(width: 10),
+                    const Expanded(child: Text('MIGUELZÃOO PERGUNTA',
+                      style: TextStyle(color: Color(0xFF6B4EE6), fontWeight: FontWeight.w900))),
+                  ]),
+                  Container(width: double.infinity, padding: const EdgeInsets.all(18),
+                    decoration: BoxDecoration(color: const Color(0xFFEFF6FF), borderRadius: BorderRadius.circular(18)),
+                    child: Text(p.texto, textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w900, color: Color(0xFF25316B)))),
+                ]),
               ),
               const SizedBox(height: 15),
               const SizedBox(height: 25),
               for (int i = 0; i < p.alternativas.length; i++)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 12),
-                  child: FilledButton.tonal(
-                    onPressed: respondeu ? null : () => _responder(i),
-                    child: Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: Text(
-                        p.alternativas[i],
-                        style: const TextStyle(fontSize: 21),
-                      ),
+                  child: Material(
+                    color: respondeu && i == p.correta ? const Color(0xFFB8F3C9)
+                      : respondeu && i == selecionada ? const Color(0xFFFFC7C7) : Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(20),
+                      onTap: respondeu ? null : () => _responder(i),
+                      child: Padding(padding: const EdgeInsets.all(18), child: Row(children: [
+                        CircleAvatar(backgroundColor: const Color(0xFF6B4EE6),
+                          child: Text(String.fromCharCode(65 + i), style: const TextStyle(color: Colors.white))),
+                        const SizedBox(width: 14),
+                        Expanded(child: Text(p.alternativas[i],
+                          style: const TextStyle(fontSize: 21, fontWeight: FontWeight.bold, color: Color(0xFF25316B)))),
+                        Icon(respondeu && i == p.correta ? Icons.check_circle : Icons.arrow_forward_ios,
+                          color: const Color(0xFF6B4EE6)),
+                      ])),
                     ),
                   ),
                 ),
@@ -516,6 +548,7 @@ class _JogoQuizState extends State<JogoQuiz> {
             ],
           ),
         ),
+      ),
       ),
     );
   }

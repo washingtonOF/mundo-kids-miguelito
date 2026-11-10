@@ -1558,13 +1558,27 @@ class _TelaCampeonatoMultiplayerState extends State<TelaCampeonatoMultiplayer> {
                   style: TextStyle(fontSize: 12)),
 
               ] else ...[
+                const Text('🔬 LABORATÓRIO DOS DESAFIOS',
+                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.w900, color: Color(0xFF25316B))),
+                const SizedBox(height: 10),
                 Text('Pergunta ${rodada + 1} de ${perguntas.length}',
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 19)),
                 const SizedBox(height: 8),
                 Text('⏱️ $restante segundos', style: const TextStyle(fontSize: 23, color: Color(0xFF6B4EE6))),
+                LinearProgressIndicator(value: (rodada + 1) / perguntas.length,
+                  minHeight: 10, color: const Color(0xFFFFC928),
+                  borderRadius: BorderRadius.circular(12)),
                 const SizedBox(height: 20),
-                Text(perguntas[rodada].texto,
-                    textAlign: TextAlign.center, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                Container(width: double.infinity, padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(color: const Color(0xFFEFF6FF),
+                    borderRadius: BorderRadius.circular(22)),
+                  child: Column(children: [
+                    const Text('🧪 MIGUELZÃOO PERGUNTA',
+                      style: TextStyle(fontWeight: FontWeight.w900, color: Color(0xFF6B4EE6))),
+                    const SizedBox(height: 12),
+                    Text(perguntas[rodada].texto, textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 23, fontWeight: FontWeight.w900, color: Color(0xFF25316B))),
+                  ])),
                  const SizedBox(height: 10),
                  TextButton.icon(
                    onPressed: VozMiguelito.habilitada ? () => _lerPergunta(perguntas[rodada]) : null,
@@ -1574,10 +1588,10 @@ class _TelaCampeonatoMultiplayerState extends State<TelaCampeonatoMultiplayer> {
                 const SizedBox(height: 14),
                 for (var i = 0; i < 4; i++) Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: SizedBox(width: double.infinity, child: OutlinedButton(
+                  child: SizedBox(width: double.infinity, child: FilledButton.tonal(
                     onPressed: respondeu || _enviando ? null : () => _responder(rodada, i),
                     child: Padding(padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 8), child: Text(
-                      '${String.fromCharCode(65+i)}. ${perguntas[rodada].opcoes[i]}',
+                      '${String.fromCharCode(65+i)}  ·  ${perguntas[rodada].opcoes[i]}',
                       textAlign: TextAlign.center,
                       style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600))),
                   )),
