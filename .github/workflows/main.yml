@@ -36,6 +36,10 @@ jobs:
           cache: true
       - name: Instalar dependencias
         run: flutter pub get
+      - name: Gerar favicon e ícones do avatar atual
+        run: |
+          python3 -m pip install --user Pillow
+          python3 scripts/gerar_icones_web.py
       - name: Compilar site Flutter
         run: flutter build web --release --base-href /mundo-kids-miguelito/
       - name: Conferir versao nova e avatar no site compilado
