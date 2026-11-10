@@ -2,7 +2,7 @@
   "name": "miguelzao-firebase-security-tests",
   "private": true,
   "scripts": {
-    "test:security": "firebase emulators:exec --only database,auth --project demo-miguelzao-security 'node --test test/security/database.rules.test.cjs'"
+    "test:security": "firebase emulators:exec --config security/firebase.emulator.json --only database,auth --project demo-miguelzao-security 'node --test test/security/database.rules.test.cjs'"
   },
   "devDependencies": {
     "@firebase/rules-unit-testing": "^4.0.1",
