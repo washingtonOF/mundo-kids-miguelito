@@ -532,79 +532,125 @@ class TelaJogos extends StatelessWidget {
       ],
     );
 
+    Widget avatar({double altura = 240}) => SizedBox(
+      height: altura,
+      child: Image.asset(
+        'Menino feliz com tablet azul.png',
+        fit: BoxFit.contain,
+        errorBuilder: (_, __, ___) => Center(
+          child: AvatarMiguelito(tamanho: altura * 0.9),
+        ),
+      ),
+    );
+
+    Widget painel() => Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          ingles ? 'Which adventure shall we play today?' : 'Qual aventura vamos jogar hoje?',
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w800, color: Color(0xFF31235B)),
+        ),
+        const SizedBox(height: 12),
+        for (int index = 0; index < atividades.length; index++)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 9),
+            child: Material(
+              color: Colors.white.withValues(alpha: 0.95),
+              elevation: 2,
+              borderRadius: BorderRadius.circular(16),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: () => abrirAtividade(index),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+                  child: Row(children: [
+                    Text(atividades[index].$1, style: const TextStyle(fontSize: 25)),
+                    const SizedBox(width: 12),
+                    Expanded(child: Text(atividades[index].$2,
+                      style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Color(0xFF31235B)))),
+                    const Icon(Icons.chevron_right_rounded, color: Color(0xFF6B4EE6)),
+                  ]),
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+
     return Scaffold(
       appBar: AppBar(
-        actions: const [BotoesNavegacao()],
-        title: Text(ingles ? '🎮 Choose an adventure!' : '🎮 Escolha uma aventura!'),
-        backgroundColor: const Color(0xFFE2F5FF),
+        automaticallyImplyLeading: false,
+        backgroundColor: const Color(0xFFE1F5FF),
+        titleSpacing: 4,
+        title: Row(children: [
+          IconButton(
+            tooltip: ingles ? 'Back' : 'Voltar',
+            icon: const Icon(Icons.arrow_back_rounded, size: 22),
+            onPressed: () {
+              final navigator = Navigator.of(context);
+              if (navigator.canPop()) navigator.pop();
+            },
+          ),
+          IconButton(
+            tooltip: ingles ? 'Games home' : 'Início - jogos',
+            icon: const Icon(Icons.home_outlined, size: 22),
+            onPressed: () {
+              final navigator = Navigator.of(context);
+              navigator.popUntil((route) => route.settings.name == '/jogos' || route.isFirst);
+              if (ModalRoute.of(context)?.settings.name != '/jogos' &&
+                  navigator.canPop() == false) {
+                navigator.push(MaterialPageRoute(
+                  settings: const RouteSettings(name: '/jogos'),
+                  builder: (_) => const TelaJogos(),
+                ));
+              }
+            },
+          ),
+          const SizedBox(width: 5),
+          Flexible(child: Text(
+            ingles ? 'Choose an adventure!' : 'Escolha uma aventura!',
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 17),
+          )),
+        ]),
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final desktop = constraints.maxWidth >= 720;
-          if (desktop) {
-            return Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/fundo_jogos.png'),
-                  fit: BoxFit.cover,
-                  alignment: Alignment.centerLeft,
-                ),
-              ),
-              child: Row(
-                children: [
-                  const Expanded(flex: 5, child: SizedBox.expand()),
-                  Expanded(
-                    flex: 5,
-                    child: Container(
-                      color: const Color(0xFFDBF3FF).withValues(alpha: 0.92),
-                      child: Center(
-                        child: SingleChildScrollView(
-                          padding: const EdgeInsets.all(18),
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 480),
-                            child: menu(),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFF31B9FF), Color(0xFFB7EEFF), Color(0xFFDEF7C5)],
+          ),
+        ),
+        child: LayoutBuilder(builder: (context, dimensoes) {
+          final amplo = dimensoes.maxWidth >= 720;
+          if (amplo) {
+            return Center(child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1100),
+              child: Row(children: [
+                Expanded(child: avatar(altura: (dimensoes.maxHeight * 0.76).clamp(230.0, 530.0))),
+                Expanded(child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(24),
+                  child: painel(),
+                )),
+              ]),
+            ));
           }
-          final alturaImagem = (constraints.maxHeight * 0.36).clamp(150.0, 280.0);
-          return Container(
-            color: const Color(0xFFDBF3FF),
-            child: Column(
-              children: [
-                SizedBox(
-                  width: double.infinity,
-                  height: alturaImagem,
-                  child: const DecoratedBox(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/fundo_jogos.png'),
-                        fit: BoxFit.cover,
-                        alignment: Alignment.bottomCenter,
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(16, 18, 16, 24),
-                    child: Center(
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 480),
-                        child: menu(),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
+          return SafeArea(child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+            child: Center(child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 470),
+              child: Column(children: [
+                avatar(altura: (dimensoes.maxHeight * 0.30).clamp(125.0, 230.0)),
+                const SizedBox(height: 10),
+                painel(),
+              ]),
+            )),
+          ));
+        }),
       ),
     );
   }
