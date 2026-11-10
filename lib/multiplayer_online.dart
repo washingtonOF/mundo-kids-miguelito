@@ -144,21 +144,37 @@ class ServicoMultiplayer {
     // As regras de segurança só permitem ler a sala completa depois
     // de ingressar. Consultar apenas vagas individuais liberadas para
     // ingresso; nunca fazer get() na sala antes de ocupar uma vaga.
-    for (var indice = 1; indice < 20; indice++) {
-      final ocupada = await referencia.child('vagas/vaga$indice').get();
-      if (ocupada.child('uid').value == usuario.uid) return;
-    }
+    // Diagnóstico por etapa: o RTDB pode negar a leitura ou o commit
+    // da transação. Não consultar a sala inteira antes do ingresso.
     for (var indice = 1; indice < 20; indice++) {
       final vaga = referencia.child('vagas/vaga$indice');
-      final resultado = await vaga.runTransaction((atual) {
-        if (atual != null) return Transaction.abort();
-        return Transaction.success({
-          'uid': usuario.uid,
-          'nome': nome,
-          'pontos': 0,
-        });
-      }, applyLocally: false);
-      if (resultado.committed) return;
+      DataSnapshot atual;
+      try {
+        atual = await vaga.get();
+      } on FirebaseException catch (erro) {
+        throw StateError(
+          'Falha ao consultar vaga$indice: ${erro.code}. '
+          'Verifique a regra .read em salas/\\$codigo/vagas/\\$vaga.',
+        );
+      }
+      if (atual.child('uid').value == usuario.uid) return;
+      if (atual.exists) continue;
+      try {
+        final resultado = await vaga.runTransaction((valor) {
+          if (valor != null) return Transaction.abort();
+          return Transaction.success({
+            'uid': usuario.uid,
+            'nome': nome,
+            'pontos': 0,
+          });
+        }, applyLocally: false);
+        if (resultado.committed) return;
+      } on FirebaseException catch (erro) {
+        throw StateError(
+          'Falha ao reservar vaga$indice: ${erro.code}. '
+          'Verifique a regra .write e as validações da vaga.',
+        );
+      }
     }
     throw StateError('Não foi possível entrar. Confira o código ou as vagas disponíveis.');
   }
