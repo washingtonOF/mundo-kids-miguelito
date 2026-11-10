@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'configuracoes_jogo.dart';
 import 'banco_conteudo.dart' as banco;
 import 'dart:math';
@@ -503,7 +504,7 @@ class TelaEsperaMultiplayer extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const Text(
-                        '🤖 Amigos reunidos!',
+                        'Amigos reunidos!',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 25,
@@ -886,19 +887,173 @@ class _NomeFlutuanteState extends State<_NomeFlutuante>
   }
 }
 
-// Fundo sem personagem embutido: evita que o avatar fique atrás dos textos.
-Widget _fundo({required Widget child}) => Container(
-  width: double.infinity,
-  height: double.infinity,
-  decoration: const BoxDecoration(
-    gradient: LinearGradient(
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-      colors: [Color(0xFF83D8FF), Color(0xFFEAF8FF), Color(0xFFB7E5F7)],
-    ),
-  ),
-  child: child,
-);
+// Elementos científicos animados ficam somente atrás dos painéis.
+Widget _fundo({required Widget child}) => _FundoCientifico(child: child);
+
+class _FundoCientifico extends StatefulWidget {
+  const _FundoCientifico({required this.child});
+  final Widget child;
+
+  @override
+  State<_FundoCientifico> createState() => _FundoCientificoState();
+}
+
+class _FundoCientificoState extends State<_FundoCientifico>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _animacao;
+
+  @override
+  void initState() {
+    super.initState();
+    _animacao = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 12),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _animacao.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final reduzirMovimento =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        const DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFF2466C5),
+                Color(0xFF103B8C),
+                Color(0xFF09265D),
+              ],
+            ),
+          ),
+        ),
+        IgnorePointer(
+          child: RepaintBoundary(
+            child: AnimatedBuilder(
+              animation: _animacao,
+              builder: (context, _) => CustomPaint(
+                painter: _PintorFundoCientifico(
+                  tempo: reduzirMovimento ? 0 : _animacao.value,
+                ),
+              ),
+            ),
+          ),
+        ),
+        widget.child,
+      ],
+    );
+  }
+}
+
+class _PintorFundoCientifico extends CustomPainter {
+  const _PintorFundoCientifico({required this.tempo});
+  final double tempo;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    if (w <= 0 || h <= 0) return;
+
+    // Distribuição lateral: painel central permanece visualmente limpo.
+    _atomo(canvas, Offset(w * 0.09, h * 0.19), 40, tempo, const Color(0xFF86EDFF));
+    _atomo(canvas, Offset(w * 0.91, h * 0.77), 47, -tempo * 0.8, const Color(0xFFBCA4FF));
+    _dna(canvas, Offset(w * 0.90, h * 0.16), 125, tempo, const Color(0xFF79E8FF));
+    _dna(canvas, Offset(w * 0.09, h * 0.72), 105, tempo + 0.4, const Color(0xFFBBA4FF));
+
+    final pontos = <Offset>[
+      Offset(w * 0.24, h * 0.11),
+      Offset(w * 0.76, h * 0.26),
+      Offset(w * 0.12, h * 0.47),
+      Offset(w * 0.86, h * 0.54),
+      Offset(w * 0.26, h * 0.89),
+      Offset(w * 0.71, h * 0.92),
+    ];
+    for (var i = 0; i < pontos.length; i++) {
+      final fase = tempo * 2 * 3.14159265 + i * 1.1;
+      final ponto = pontos[i] + Offset(0, -8 * math.sin(fase));
+      canvas.drawCircle(
+        ponto,
+        2.5,
+        Paint()..color = const Color(0xFFB2F5FF).withValues(
+          alpha: 0.25 + 0.35 * (0.5 + 0.5 * math.sin(fase)),
+        ),
+      );
+    }
+  }
+
+  void _atomo(Canvas canvas, Offset centro, double raio, double t, Color cor) {
+    final deslocamento = Offset(0, 10 * math.sin(t * 2 * math.pi));
+    canvas.save();
+    canvas.translate(centro.dx + deslocamento.dx, centro.dy + deslocamento.dy);
+    canvas.rotate(t * 2 * math.pi);
+    final linha = Paint()
+      ..color = cor.withValues(alpha: 0.65)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.2;
+    for (var i = 0; i < 3; i++) {
+      canvas.save();
+      canvas.rotate(i * math.pi / 3);
+      canvas.drawOval(
+        Rect.fromCenter(center: Offset.zero, width: raio * 2, height: raio * 0.8),
+        linha,
+      );
+      canvas.restore();
+    }
+    canvas.drawCircle(Offset.zero, 5, Paint()..color = const Color(0xFFFFD56E));
+    canvas.restore();
+  }
+
+  void _dna(Canvas canvas, Offset centro, double altura, double t, Color cor) {
+    final yInicial = centro.dy - altura / 2 + 12 * math.sin(t * 2 * math.pi);
+    final ladoA = Path();
+    final ladoB = Path();
+    const passos = 48;
+    for (var i = 0; i <= passos; i++) {
+      final f = i / passos;
+      final y = yInicial + f * altura;
+      final x = 17 * math.sin(f * math.pi * 4 + t * math.pi * 2);
+      if (i == 0) {
+        ladoA.moveTo(centro.dx + x, y);
+        ladoB.moveTo(centro.dx - x, y);
+      } else {
+        ladoA.lineTo(centro.dx + x, y);
+        ladoB.lineTo(centro.dx - x, y);
+      }
+      if (i % 6 == 0) {
+        canvas.drawLine(
+          Offset(centro.dx + x, y),
+          Offset(centro.dx - x, y),
+          Paint()
+            ..color = const Color(0xFFD9F7FF).withValues(alpha: 0.45)
+            ..strokeWidth = 1.7,
+        );
+      }
+    }
+    final tinta = Paint()
+      ..color = cor.withValues(alpha: 0.72)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.6
+      ..strokeCap = StrokeCap.round;
+    canvas.drawPath(ladoA, tinta);
+    tinta.color = const Color(0xFFBBA4FF).withValues(alpha: 0.7);
+    canvas.drawPath(ladoB, tinta);
+  }
+
+  @override
+  bool shouldRepaint(covariant _PintorFundoCientifico oldDelegate) =>
+      oldDelegate.tempo != tempo;
+}
 
 Widget _painel({required Widget child}) => Container(
   constraints: const BoxConstraints(maxWidth: 520),
