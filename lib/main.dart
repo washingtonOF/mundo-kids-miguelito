@@ -422,7 +422,7 @@ class TelaModoJogo extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
         onTap: () => Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => destino),
+          MaterialPageRoute(settings: destino is TelaJogos ? const RouteSettings(name: '/jogos') : null, builder: (_) => destino),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
@@ -490,7 +490,7 @@ class TelaJogos extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.95),
             borderRadius: BorderRadius.circular(22),
@@ -498,29 +498,29 @@ class TelaJogos extends StatelessWidget {
           child: Text(
             ingles ? 'Which adventure shall we play today?' : 'Qual aventura vamos jogar hoje?',
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: Color(0xFF31235B)),
+            style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w800, color: Color(0xFF31235B)),
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 10),
         for (int index = 0; index < atividades.length; index++)
           Padding(
-            padding: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.only(bottom: 8),
             child: Material(
               color: Colors.white.withValues(alpha: 0.96),
               elevation: 3,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(15),
               child: InkWell(
                 borderRadius: BorderRadius.circular(20),
                 onTap: () => abrirAtividade(index),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
                   child: Row(
                     children: [
-                      Text(atividades[index].$1, style: const TextStyle(fontSize: 30)),
-                      const SizedBox(width: 14),
+                      Text(atividades[index].$1, style: const TextStyle(fontSize: 25)),
+                      const SizedBox(width: 12),
                       Expanded(
                         child: Text(atividades[index].$2,
-                          style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold, color: Color(0xFF31235B))),
+                          style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Color(0xFF31235B))),
                       ),
                       const Icon(Icons.arrow_forward_ios_rounded, color: Color(0xFF6B4EE6)),
                     ],
@@ -559,7 +559,7 @@ class TelaJogos extends StatelessWidget {
                       color: const Color(0xFFDBF3FF).withValues(alpha: 0.92),
                       child: Center(
                         child: SingleChildScrollView(
-                          padding: const EdgeInsets.all(24),
+                          padding: const EdgeInsets.all(18),
                           child: ConstrainedBox(
                             constraints: const BoxConstraints(maxWidth: 480),
                             child: menu(),
