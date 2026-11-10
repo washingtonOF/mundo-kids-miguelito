@@ -480,25 +480,13 @@ class TelaEsperaMultiplayer extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        for (final nome in nomes)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 3),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(Icons.person_rounded,
-                                    size: 20, color: Color(0xFF6B4EE6)),
-                                const SizedBox(width: 8),
-                                Flexible(
-                                  child: Text(
-                                    nome,
-                                    style: const TextStyle(fontSize: 16),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
+                        for (final entrada in jogadores.entries)
+                          if (entrada.value is Map)
+                            _NomeFlutuante(
+                              key: ValueKey('participante_${entrada.key}'),
+                              nome: (entrada.value['nome'] ?? 'Jogador').toString(),
+                              anfitriao: entrada.value['uid'] == dados['criador'],
                             ),
-                          ),
                         const SizedBox(height: 12),
                         Text(
                           '🎮 ${tiposCampeonato[tipo] ?? 'Misto'} · $tempo segundos por pergunta',
@@ -672,6 +660,110 @@ class TelaEsperaMultiplayer extends StatelessWidget {
                 },
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Cartão animado de participante: entra suavemente e flutua enquanto espera.
+class _NomeFlutuante extends StatefulWidget {
+  const _NomeFlutuante({
+    super.key,
+    required this.nome,
+    required this.anfitriao,
+  });
+
+  final String nome;
+  final bool anfitriao;
+
+  @override
+  State<_NomeFlutuante> createState() => _NomeFlutuanteState();
+}
+
+class _NomeFlutuanteState extends State<_NomeFlutuante>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _flutuar;
+
+  @override
+  void initState() {
+    super.initState();
+    _flutuar = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1800),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _flutuar.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final destaque = widget.anfitriao;
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: const Duration(milliseconds: 650),
+      curve: Curves.easeOutBack,
+      builder: (context, entrada, child) => Opacity(
+        opacity: entrada.clamp(0.0, 1.0),
+        child: Transform.scale(
+          scale: 0.75 + 0.25 * entrada,
+          child: child,
+        ),
+      ),
+      child: AnimatedBuilder(
+        animation: _flutuar,
+        builder: (context, child) => Transform.translate(
+          offset: Offset(0, -4 * _flutuar.value),
+          child: child,
+        ),
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 310),
+          margin: const EdgeInsets.symmetric(vertical: 7, horizontal: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+          decoration: BoxDecoration(
+            color: destaque ? const Color(0xFFFFE7A0) : Colors.white,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: destaque ? const Color(0xFFFFB930) : const Color(0xFFB7A4FF),
+              width: destaque ? 2.5 : 1.5,
+            ),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x220C1550),
+                blurRadius: 12,
+                offset: Offset(0, 5),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                destaque ? Icons.workspace_premium_rounded : Icons.person_rounded,
+                color: destaque ? const Color(0xFF9D6200) : const Color(0xFF6B4EE6),
+              ),
+              const SizedBox(width: 9),
+              Flexible(
+                child: Text(
+                  widget.nome,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: destaque ? 19 : 17,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF31235B),
+                  ),
+                ),
+              ),
+              if (destaque) ...[
+                const SizedBox(width: 7),
+                const Text('👑', style: TextStyle(fontSize: 18)),
+              ],
+            ],
           ),
         ),
       ),
