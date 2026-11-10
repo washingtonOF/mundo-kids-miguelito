@@ -1,6 +1,6 @@
 {
   "database": {
-    "rules": "security/database.rules.candidate.json"
+    "rules": "database.rules.candidate.json"
   },
   "emulators": {
     "database": {
