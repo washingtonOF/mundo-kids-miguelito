@@ -602,23 +602,25 @@ class TelaEsperaMultiplayer extends StatelessWidget {
   }
 }
 
+// Fundo sem personagem embutido: evita que o avatar fique atrás dos textos.
 Widget _fundo({required Widget child}) => Container(
   width: double.infinity,
   height: double.infinity,
   decoration: const BoxDecoration(
-    image: DecorationImage(
-      image: AssetImage('assets/images/fundo_jogos.png'),
-      fit: BoxFit.cover,
+    gradient: LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [Color(0xFF83D8FF), Color(0xFFEAF8FF), Color(0xFFB7E5F7)],
     ),
   ),
   child: child,
 );
 
 Widget _painel({required Widget child}) => Container(
-  constraints: const BoxConstraints(maxWidth: 440),
-  padding: const EdgeInsets.all(24),
+  constraints: const BoxConstraints(maxWidth: 520),
+  padding: const EdgeInsets.all(20),
   decoration: BoxDecoration(
-    color: Colors.white.withValues(alpha: 0.92),
+    color: Colors.white,
     borderRadius: BorderRadius.circular(24),
   ),
   child: child,
@@ -977,8 +979,10 @@ class _TelaCampeonatoMultiplayerState extends State<TelaCampeonatoMultiplayer> {
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: SizedBox(width: double.infinity, child: OutlinedButton(
                     onPressed: respondeu || _enviando ? null : () => _responder(rodada, i),
-                    child: Padding(padding: const EdgeInsets.all(10), child: Text(
-                      '${String.fromCharCode(65+i)}. ${perguntas[rodada].opcoes[i]}')),
+                    child: Padding(padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 8), child: Text(
+                      '${String.fromCharCode(65+i)}. ${perguntas[rodada].opcoes[i]}',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600))),
                   )),
                 ),
                 if (respondeu) Padding(
