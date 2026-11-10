@@ -758,6 +758,11 @@ class TelaCampeonatoMultiplayer extends StatefulWidget {
 
 class _TelaCampeonatoMultiplayerState extends State<TelaCampeonatoMultiplayer> {
   Timer? _relogio;
+  StreamSubscription<DatabaseEvent>? _sincronizacaoHorario;
+  int _deslocamentoServidorMs = 0;
+
+  int get _agoraServidorMs =>
+      DateTime.now().millisecondsSinceEpoch + _deslocamentoServidorMs;
   DateTime _agora = DateTime.now();
   bool _enviando = false;
   final FlutterTts _voz = FlutterTts();
@@ -801,13 +806,23 @@ class _TelaCampeonatoMultiplayerState extends State<TelaCampeonatoMultiplayer> {
   void initState() {
     super.initState();
     VozMiguelito.configurar(_voz);
-    _relogio = Timer.periodic(const Duration(milliseconds: 250), (_) {
+    _sincronizacaoHorario = FirebaseDatabase.instanceFor(
+      app: FirebaseAuth.instance.app,
+      databaseURL: 'https://mundo-kids-ee4e7-default-rtdb.firebaseio.com',
+    ).ref('.info/serverTimeOffset').onValue.listen((evento) {
+      final valor = evento.snapshot.value;
+      if (mounted && valor is num) {
+        setState(() => _deslocamentoServidorMs = valor.round());
+      }
+    });
+    _relogio = Timer.periodic(const Duration(milliseconds: 500), (_) {
       if (mounted) setState(() => _agora = DateTime.now());
     });
   }
   @override
   void dispose() {
     _relogio?.cancel();
+    _sincronizacaoHorario?.cancel();
     _sequenciaNarracao++;
     _vozAtiva = false;
     _voz.stop();
@@ -829,7 +844,7 @@ class _TelaCampeonatoMultiplayerState extends State<TelaCampeonatoMultiplayer> {
         throw StateError('A partida não está ativa.');
       }
              final tempo = (dados['tempoPergunta'] as num?)?.toInt() ?? 20;
-       final rodadaLocal = ((DateTime.now().millisecondsSinceEpoch - inicio)
+       final rodadaLocal = ((_agoraServidorMs - inicio)
                .clamp(0, 999999999)) ~/ (tempo * 1000);
       if (rodadaLocal != indice) {
         throw StateError('A pergunta mudou. Aguarde a atualização da tela.');
@@ -878,7 +893,7 @@ class _TelaCampeonatoMultiplayerState extends State<TelaCampeonatoMultiplayer> {
           final inicio = (dados['inicioEm'] as num?)?.toInt();
           if (inicio == null) return const Center(child: Text('Preparando a partida...'));
                      final tempo = (dados['tempoPergunta'] as num?)?.toInt() ?? 20;
-           final decorrido = (_agora.millisecondsSinceEpoch - inicio).clamp(0, 999999999);
+           final decorrido = (_agoraServidorMs - inicio).clamp(0, 999999999);
            final rodada = decorrido ~/ (tempo * 1000);
            final restante = tempo - ((decorrido ~/ 1000) % tempo);
           final vagas = dados['vagas'] is Map ? Map<String, dynamic>.from(dados['vagas'] as Map) : <String, dynamic>{};
