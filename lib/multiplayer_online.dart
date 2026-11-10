@@ -503,14 +503,25 @@ class TelaEsperaMultiplayer extends StatelessWidget {
                   return Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text(
-                        'Amigos reunidos!',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF31235B),
-                        ),
+                      const Wrap(
+                        alignment: WrapAlignment.center,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 9,
+                        children: [
+                          Icon(Icons.groups_rounded,
+                              size: 30, color: Color(0xFF6B4EE6)),
+                          Text(
+                            'Amigos reunidos!',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF31235B),
+                            ),
+                          ),
+                          Icon(Icons.science_rounded,
+                              size: 27, color: Color(0xFF26A6C6)),
+                        ],
                       ),
                       const SizedBox(height: 14),
                       const Text('Compartilhe o código da sala:'),
@@ -993,36 +1004,66 @@ class _PintorFundoCientifico extends CustomPainter {
   }
 
   void _atomo(Canvas canvas, Offset centro, double raio, double t, Color cor) {
-    final deslocamento = Offset(0, 10 * math.sin(t * 2 * math.pi));
+    // Elétrons com posições diferentes tornam o giro visível mesmo em
+    // órbitas simétricas. Cada átomo flutua e os elétrons percorrem elipses.
     canvas.save();
-    canvas.translate(centro.dx + deslocamento.dx, centro.dy + deslocamento.dy);
-    canvas.rotate(t * 2 * math.pi);
+    canvas.translate(centro.dx, centro.dy + 16 * math.sin(t * 2 * math.pi));
     final linha = Paint()
-      ..color = cor.withValues(alpha: 0.65)
+      ..color = cor.withValues(alpha: 0.7)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.2;
     for (var i = 0; i < 3; i++) {
+      final angulo = i * math.pi / 3;
       canvas.save();
-      canvas.rotate(i * math.pi / 3);
+      canvas.rotate(angulo);
       canvas.drawOval(
-        Rect.fromCenter(center: Offset.zero, width: raio * 2, height: raio * 0.8),
+        Rect.fromCenter(
+          center: Offset.zero,
+          width: raio * 2,
+          height: raio * 0.8,
+        ),
         linha,
+      );
+      final fase = t * 2 * math.pi * (i.isEven ? 2 : -2) + i * 2.1;
+      final eletron = Offset(
+        raio * math.cos(fase),
+        raio * 0.4 * math.sin(fase),
+      );
+      canvas.drawCircle(
+        eletron,
+        6.5,
+        Paint()
+          ..color = cor.withValues(alpha: 0.3)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
+      );
+      canvas.drawCircle(
+        eletron,
+        4.2,
+        Paint()..color = const Color(0xFFE7FCFF),
       );
       canvas.restore();
     }
-    canvas.drawCircle(Offset.zero, 5, Paint()..color = const Color(0xFFFFD56E));
+    canvas.drawCircle(
+      Offset.zero,
+      6,
+      Paint()..color = const Color(0xFFFFD56E),
+    );
     canvas.restore();
   }
 
   void _dna(Canvas canvas, Offset centro, double altura, double t, Color cor) {
-    final yInicial = centro.dy - altura / 2 + 12 * math.sin(t * 2 * math.pi);
+    // Hélice com torção real: os fios e degraus mudam de posição a cada frame.
+    // O deslocamento vertical também torna a flutuação perceptível.
+    final yInicial = centro.dy - altura / 2 +
+        18 * math.sin(t * 2 * math.pi);
     final ladoA = Path();
     final ladoB = Path();
-    const passos = 48;
+    const passos = 72;
     for (var i = 0; i <= passos; i++) {
       final f = i / passos;
       final y = yInicial + f * altura;
-      final x = 17 * math.sin(f * math.pi * 4 + t * math.pi * 2);
+      final fase = f * math.pi * 4 + t * math.pi * 4;
+      final x = 21 * math.sin(fase);
       if (i == 0) {
         ladoA.moveTo(centro.dx + x, y);
         ladoB.moveTo(centro.dx - x, y);
@@ -1035,18 +1076,18 @@ class _PintorFundoCientifico extends CustomPainter {
           Offset(centro.dx + x, y),
           Offset(centro.dx - x, y),
           Paint()
-            ..color = const Color(0xFFD9F7FF).withValues(alpha: 0.45)
-            ..strokeWidth = 1.7,
+            ..color = const Color(0xFFD9F7FF).withValues(alpha: 0.55)
+            ..strokeWidth = 2,
         );
       }
     }
     final tinta = Paint()
-      ..color = cor.withValues(alpha: 0.72)
+      ..color = cor.withValues(alpha: 0.85)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.6
+      ..strokeWidth = 3.2
       ..strokeCap = StrokeCap.round;
     canvas.drawPath(ladoA, tinta);
-    tinta.color = const Color(0xFFBBA4FF).withValues(alpha: 0.7);
+    tinta.color = const Color(0xFFBBA4FF).withValues(alpha: 0.85);
     canvas.drawPath(ladoB, tinta);
   }
 
