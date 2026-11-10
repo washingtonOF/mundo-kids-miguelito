@@ -38,6 +38,15 @@ jobs:
         run: flutter pub get
       - name: Compilar site Flutter
         run: flutter build web --release --base-href /mundo-kids-miguelito/
+      - name: Conferir versao nova e avatar no site compilado
+        run: |
+          test -s build/web/index.html
+          test -s build/web/flutter_bootstrap.js
+          test -s build/web/main.dart.js
+          echo "Conferindo avatar do tablet nos assets..."
+          find build/web/assets -type f -iname '*tablet*' -print
+          find build/web/assets -type f -iname '*tablet*' | grep -q .
+          echo "Arquivos Web e avatar presentes no build."
       - name: Disponibilizar site compilado
         uses: actions/upload-artifact@v4
         with:
