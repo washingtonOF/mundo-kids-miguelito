@@ -407,11 +407,31 @@ class TelaEsperaMultiplayer extends StatefulWidget {
 class _TelaEsperaMultiplayerState extends State<TelaEsperaMultiplayer> {
   late Stream<DatabaseEvent> _salaStream;
   bool _navegandoParaPartida = false;
+  StreamSubscription<DatabaseEvent>? _conexao;
+  bool? _conectado;
+
+  void _acompanharConexao() {
+    _conexao?.cancel();
+    _conexao = FirebaseDatabase.instanceFor(
+      app: FirebaseAuth.instance.app,
+      databaseURL: 'https://mundo-kids-ee4e7-default-rtdb.firebaseio.com',
+    ).ref('.info/connected').onValue.listen((evento) {
+      if (!mounted) return;
+      final conectado = evento.snapshot.value == true;
+      if (_conectado != conectado) {
+        setState(() => _conectado = conectado);
+      }
+    }, onError: (Object erro) {
+      if (mounted) setState(() => _conectado = false);
+    });
+  }
+
 
   @override
   void initState() {
     super.initState();
     _salaStream = ServicoMultiplayer.sala(widget.codigo).onValue;
+    _acompanharConexao();
   }
 
   @override
@@ -420,7 +440,15 @@ class _TelaEsperaMultiplayerState extends State<TelaEsperaMultiplayer> {
     if (oldWidget.codigo != widget.codigo) {
       _salaStream = ServicoMultiplayer.sala(widget.codigo).onValue;
       _navegandoParaPartida = false;
+      _conectado = null;
+      _acompanharConexao();
     }
+  }
+
+  @override
+  void dispose() {
+    _conexao?.cancel();
+    super.dispose();
   }
 
   @override
@@ -436,7 +464,22 @@ class _TelaEsperaMultiplayerState extends State<TelaEsperaMultiplayer> {
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
             child: _painel(
-              child: StreamBuilder<DatabaseEvent>(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (_conectado == false)
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 12),
+                      child: Text(
+                        'Conexão perdida. Aguardando reconexão...',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color(0xFF9B431B),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  StreamBuilder<DatabaseEvent>(
                 stream: _salaStream,
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
@@ -707,6 +750,8 @@ class _TelaEsperaMultiplayerState extends State<TelaEsperaMultiplayer> {
                     ],
                   );
                 },
+                  ),
+                ],
               ),
             ),
           ),
