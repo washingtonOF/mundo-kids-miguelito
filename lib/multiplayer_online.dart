@@ -949,12 +949,15 @@ class _FundoCientificoState extends State<_FundoCientifico>
           ),
         ),
         IgnorePointer(
-          child: RepaintBoundary(
-            child: AnimatedBuilder(
-              animation: _animacao,
-              builder: (context, _) => CustomPaint(
-                painter: _PintorFundoCientifico(
-                  tempo: reduzirMovimento ? 0 : _animacao.value,
+          child: TickerMode(
+            enabled: !reduzirMovimento,
+            child: RepaintBoundary(
+              child: AnimatedBuilder(
+                animation: _animacao,
+                builder: (context, _) => CustomPaint(
+                  painter: _PintorFundoCientifico(
+                    tempo: reduzirMovimento ? 0 : _animacao.value,
+                  ),
                 ),
               ),
             ),
@@ -1058,7 +1061,7 @@ class _PintorFundoCientifico extends CustomPainter {
         35 * math.sin(t * 2 * math.pi);
     final ladoA = Path();
     final ladoB = Path();
-    const passos = 72;
+    const passos = 48;
     for (var i = 0; i <= passos; i++) {
       final f = i / passos;
       final y = yInicial + f * altura;
