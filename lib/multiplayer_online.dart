@@ -144,37 +144,32 @@ class ServicoMultiplayer {
     // As regras de segurança só permitem ler a sala completa depois
     // de ingressar. Consultar apenas vagas individuais liberadas para
     // ingresso; nunca fazer get() na sala antes de ocupar uma vaga.
-    // Diagnóstico por etapa: o RTDB pode negar a leitura ou o commit
-    // da transação. Não consultar a sala inteira antes do ingresso.
+    // O ingresso não deve depender da leitura da sala nem de transações:
+    // o Firebase Spark valida a vaga vazia de forma atômica na regra .write.
+    // Uma escrita direta evita a exigência de .read do runTransaction().
+    // Se a vaga já estiver ocupada, a regra !data.exists() rejeita o set().
+    var vagasRecusadas = 0;
     for (var indice = 1; indice < 20; indice++) {
-      final vaga = referencia.child('vagas/vaga$indice');
-      DataSnapshot atual;
       try {
-        atual = await vaga.get();
+        await referencia.child('vagas/vaga$indice').set({
+          'uid': usuario.uid,
+          'nome': nome,
+          'pontos': 0,
+        });
+        return;
       } on FirebaseException catch (erro) {
-        throw StateError(
-          'Falha ao consultar vaga$indice: ${erro.code}. '
-          'Verifique a regra .read em salas/\\$codigo/vagas/\\$vaga.',
-        );
+        if (erro.code == 'permission-denied') {
+          vagasRecusadas++;
+          continue; // Vaga ocupada ou sala fechada: tentar a próxima.
+        }
+        throw StateError('Erro ao ingressar: ${erro.code}.');
       }
-      if (atual.child('uid').value == usuario.uid) return;
-      if (atual.exists) continue;
-      try {
-        final resultado = await vaga.runTransaction((valor) {
-          if (valor != null) return Transaction.abort();
-          return Transaction.success({
-            'uid': usuario.uid,
-            'nome': nome,
-            'pontos': 0,
-          });
-        }, applyLocally: false);
-        if (resultado.committed) return;
-      } on FirebaseException catch (erro) {
-        throw StateError(
-          'Falha ao reservar vaga$indice: ${erro.code}. '
-          'Verifique a regra .write e as validações da vaga.',
-        );
-      }
+    }
+    if (vagasRecusadas == 19) {
+      throw StateError(
+        'O Firebase recusou todas as vagas. A sala pode estar cheia, '
+        'encerrada ou as regras de escrita podem estar bloqueando o ingresso.',
+      );
     }
     throw StateError('Não foi possível entrar. Confira o código ou as vagas disponíveis.');
   }
