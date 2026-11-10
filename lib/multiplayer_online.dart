@@ -470,7 +470,36 @@ class TelaEsperaMultiplayer extends StatelessWidget {
                           'Jogadores na sala: ${nomes.length}',
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
+                        const SizedBox(height: 12),
+                        const Text(
+                          '👥 Participantes da sala',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF31235B),
+                          ),
+                        ),
                         const SizedBox(height: 8),
+                        for (final nome in nomes)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 3),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.person_rounded,
+                                    size: 20, color: Color(0xFF6B4EE6)),
+                                const SizedBox(width: 8),
+                                Flexible(
+                                  child: Text(
+                                    nome,
+                                    style: const TextStyle(fontSize: 16),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        const SizedBox(height: 12),
                         Text(
                           '🎮 ${tiposCampeonato[tipo] ?? 'Misto'} · $tempo segundos por pergunta',
                           textAlign: TextAlign.center,
