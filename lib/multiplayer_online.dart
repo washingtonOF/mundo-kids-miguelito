@@ -482,14 +482,14 @@ class TelaEsperaMultiplayer extends StatelessWidget {
                         color: Colors.white,
                         padding: const EdgeInsets.all(8),
                         child: QrImageView(
-                          data: 'https://mundo-kids-ee4e7.web.app/?sala=$codigo',
+                          data: 'https://washingtonof.github.io/mundo-kids-miguelito/?sala=$codigo',
                           version: QrVersions.auto,
                           size: 160,
                         ),
                       ),
                       TextButton.icon(
                         onPressed: () => Clipboard.setData(ClipboardData(
-                          text: 'https://mundo-kids-ee4e7.web.app/?sala=$codigo',
+                          text: 'https://washingtonof.github.io/mundo-kids-miguelito/?sala=$codigo',
                         )),
                         icon: const Icon(Icons.link),
                         label: const Text('COPIAR LINK DO CONVITE'),
