@@ -953,13 +953,56 @@ class _TelaCampeonatoMultiplayerState extends State<TelaCampeonatoMultiplayer> {
                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
               if (fim) ...[
-                const Text('🏆 Pódio do campeonato!', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                const Text('🏆 Campeonato encerrado!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 12),
+                if (ranking.isNotEmpty) ...[
+                  Text(
+                    ranking.length > 1 && ranking[0].pontos == ranking[1].pontos
+                        ? '🤝 Empate na liderança!'
+                        : '🥇 Parabéns, ${ranking[0].nome}!',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 21, fontWeight: FontWeight.bold,
+                        color: Color(0xFF31235B)),
+                  ),
+                  const SizedBox(height: 8),
+                  Text('${ranking[0].pontos} pontos · ${ranking[0].acertos} acertos',
+                    textAlign: TextAlign.center),
+                ],
                 const SizedBox(height: 18),
                 for (var i = 0; i < ranking.length && i < 3; i++)
-                  ListTile(leading: Text(['🥇','🥈','🥉'][i], style: const TextStyle(fontSize: 26)),
-                    title: Text(ranking[i].nome), trailing: Text('${ranking[i].pontos} pontos · ${ranking[i].acertos} acertos')),
-                const SizedBox(height: 10),
+                  Card(
+                    child: ListTile(
+                      leading: Text(['🥇','🥈','🥉'][i],
+                        style: const TextStyle(fontSize: 26)),
+                      title: Text(ranking[i].nome,
+                        style: const TextStyle(fontWeight: FontWeight.w600)),
+                      subtitle: Text('${ranking[i].acertos} de ${perguntas.length} acertos'),
+                      trailing: Text('${ranking[i].pontos} pts',
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                const SizedBox(height: 12),
                 Text('Participantes: ${ranking.length}'),
+                const SizedBox(height: 18),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                    onPressed: () => Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (_) => const TelaMultiplayerOnline(),
+                      ),
+                    ),
+                    icon: const Icon(Icons.replay),
+                    label: const Text('JOGAR NOVAMENTE · NOVA SALA'),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text('Uma nova partida usa outro código de sala.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 12)),
+
               ] else ...[
                 Text('Pergunta ${rodada + 1} de ${perguntas.length}',
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 19)),
