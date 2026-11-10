@@ -5,3 +5,5 @@ Future<void> alternarTelaCheia(bool ativar) async {
     ativar ? SystemUiMode.immersiveSticky : SystemUiMode.edgeToEdge,
   );
 }
+
+Future<void> abrirCentralJogos() async {}
