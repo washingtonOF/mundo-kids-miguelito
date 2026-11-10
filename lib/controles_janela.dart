@@ -70,7 +70,7 @@ class _ControlesJanelaState extends State<ControlesJanela>
       children: [
         widget.child,
         Positioned(
-          top: MediaQuery.of(context).padding.top + 8,
+          bottom: MediaQuery.of(context).padding.bottom + 8,
           right: 10,
           child: Material(
             color: Colors.transparent,
