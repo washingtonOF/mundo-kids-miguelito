@@ -691,7 +691,7 @@ class _NomeFlutuanteState extends State<_NomeFlutuante>
     super.initState();
     _flutuar = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1800),
+      duration: Duration(milliseconds: widget.anfitriao ? 2200 : 1700),
     )..repeat(reverse: true);
   }
 
@@ -717,10 +717,24 @@ class _NomeFlutuanteState extends State<_NomeFlutuante>
       ),
       child: AnimatedBuilder(
         animation: _flutuar,
-        builder: (context, child) => Transform.translate(
-          offset: Offset(0, -4 * _flutuar.value),
-          child: child,
-        ),
+        builder: (context, child) {
+          // Deslocamento de 22px (antes eram apenas 4px, quase invisíveis).
+          // A leve inclinação torna a flutuação perceptível também no celular.
+          final fase = Curves.easeInOut.transform(_flutuar.value);
+          return Transform.translate(
+            offset: Offset(
+              (fase - 0.5) * (destaque ? 7 : 11),
+              (0.5 - fase) * 22,
+            ),
+            child: Transform.rotate(
+              angle: (fase - 0.5) * (destaque ? 0.025 : 0.045),
+              child: Transform.scale(
+                scale: 0.97 + fase * 0.06,
+                child: child,
+              ),
+            ),
+          );
+        },
         child: Container(
           constraints: const BoxConstraints(maxWidth: 310),
           margin: const EdgeInsets.symmetric(vertical: 7, horizontal: 8),
