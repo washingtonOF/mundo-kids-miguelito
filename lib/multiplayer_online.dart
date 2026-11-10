@@ -445,8 +445,7 @@ class TelaEsperaMultiplayer extends StatelessWidget {
                     return Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.hourglass_top_rounded,
-                            size: 64, color: Color(0xFF6B4EE6)),
+                        const _IconeCientificoGiratorio(),
                         const SizedBox(height: 18),
                         const Text(
                           'Você entrou na sala! 🎉',
@@ -662,6 +661,48 @@ class TelaEsperaMultiplayer extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Ícone científico com rotação contínua na sala de espera.
+class _IconeCientificoGiratorio extends StatefulWidget {
+  const _IconeCientificoGiratorio();
+
+  @override
+  State<_IconeCientificoGiratorio> createState() =>
+      _IconeCientificoGiratorioState();
+}
+
+class _IconeCientificoGiratorioState extends State<_IconeCientificoGiratorio>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _giro;
+
+  @override
+  void initState() {
+    super.initState();
+    _giro = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 5),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _giro.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RotationTransition(
+      turns: _giro,
+      child: const Icon(
+        Icons.blur_circular_rounded,
+        size: 64,
+        color: Color(0xFF6B4EE6),
+        semanticLabel: 'Símbolo científico animado',
       ),
     );
   }
