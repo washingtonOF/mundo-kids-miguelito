@@ -1,3 +1,4 @@
+import 'abrir_central.dart';
 import 'botoes_navegacao.dart';
 // Miguelzãoo — em desenvolvimento.
 // Propriedade: Washington Santos de Souza - IsamigShop.
@@ -284,6 +285,23 @@ class _TelaInicialState extends State<TelaInicial> {
                                   foregroundColor: Colors.white,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(26)),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            SizedBox(
+                              width: double.infinity,
+                              child: OutlinedButton.icon(
+                                onPressed: abrirCentralDeJogos,
+                                icon: const Icon(Icons.sports_esports_rounded),
+                                label: Text(ingles ? 'GAMES HUB' : 'CENTRAL DE JOGOS'),
+                                style: OutlinedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: const Color(0xFF5941A5),
+                                  side: const BorderSide(color: Color(0xFF6B4EE6), width: 2),
+                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                  textStyle: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                                 ),
                               ),
                             ),
