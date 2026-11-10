@@ -486,89 +486,125 @@ class TelaJogos extends StatelessWidget {
       Navigator.push(context, MaterialPageRoute(builder: (_) => destino));
     }
 
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        actions: const [BotoesNavegacao()],
-        title: Text(ConfiguracoesJogo.instancia.idioma == 'pt-BR' ? '🎮 Escolha uma aventura!' : '🎮 Choose an adventure!'),
-        backgroundColor: Colors.white.withValues(alpha: 0.85),
-      ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/fundo_jogos.png'),
-            fit: BoxFit.cover,
+    Widget menu() => Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.95),
+            borderRadius: BorderRadius.circular(22),
+          ),
+          child: Text(
+            ingles ? 'Which adventure shall we play today?' : 'Qual aventura vamos jogar hoje?',
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: Color(0xFF31235B)),
           ),
         ),
-        child: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 520),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.88),
-                        borderRadius: BorderRadius.circular(18),
+        const SizedBox(height: 16),
+        for (int index = 0; index < atividades.length; index++)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Material(
+              color: Colors.white.withValues(alpha: 0.96),
+              elevation: 3,
+              borderRadius: BorderRadius.circular(20),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(20),
+                onTap: () => abrirAtividade(index),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+                  child: Row(
+                    children: [
+                      Text(atividades[index].$1, style: const TextStyle(fontSize: 30)),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Text(atividades[index].$2,
+                          style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold, color: Color(0xFF31235B))),
                       ),
-                      child: Text(
-                        ingles ? 'Which adventure shall we play today?' : 'Qual aventura vamos jogar hoje?',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 23,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF31235B),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    for (int index = 0; index < atividades.length; index++)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: Card(
-                          elevation: 3,
-                          color: Colors.white.withValues(alpha: 0.92),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 18,
-                              vertical: 8,
-                            ),
-                            leading: Text(
-                              atividades[index].$1,
-                              style: const TextStyle(fontSize: 32),
-                            ),
-                            title: Text(
-                              atividades[index].$2,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF31235B),
-                              ),
-                            ),
-                            trailing: const Icon(
-                              Icons.arrow_forward_ios,
-                              color: Color(0xFF6B4EE6),
-                            ),
-                            onTap: () => abrirAtividade(index),
-                          ),
-                        ),
-                      ),
-                  ],
+                      const Icon(Icons.arrow_forward_ios_rounded, color: Color(0xFF6B4EE6)),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
+      ],
+    );
+
+    return Scaffold(
+      appBar: AppBar(
+        actions: const [BotoesNavegacao()],
+        title: Text(ingles ? '🎮 Choose an adventure!' : '🎮 Escolha uma aventura!'),
+        backgroundColor: const Color(0xFFE2F5FF),
+      ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final desktop = constraints.maxWidth >= 720;
+          if (desktop) {
+            return Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/fundo_jogos.png'),
+                  fit: BoxFit.cover,
+                  alignment: Alignment.centerLeft,
+                ),
+              ),
+              child: Row(
+                children: [
+                  const Expanded(flex: 5, child: SizedBox.expand()),
+                  Expanded(
+                    flex: 5,
+                    child: Container(
+                      color: const Color(0xFFDBF3FF).withValues(alpha: 0.92),
+                      child: Center(
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.all(24),
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 480),
+                            child: menu(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+          final alturaImagem = (constraints.maxHeight * 0.36).clamp(150.0, 280.0);
+          return Container(
+            color: const Color(0xFFDBF3FF),
+            child: Column(
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  height: alturaImagem,
+                  child: const DecoratedBox(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/fundo_jogos.png'),
+                        fit: BoxFit.cover,
+                        alignment: Alignment.bottomCenter,
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(16, 18, 16, 24),
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 480),
+                        child: menu(),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
