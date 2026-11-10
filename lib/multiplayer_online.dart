@@ -932,9 +932,7 @@ class _FundoCientificoState extends State<_FundoCientifico>
   Widget build(BuildContext context) {
     final reduzirMovimento =
         MediaQuery.maybeOf(context)?.disableAnimations ?? false;
-    return TickerMode(
-      enabled: !reduzirMovimento,
-      child: Stack(
+    return Stack(
       fit: StackFit.expand,
       children: [
         const DecoratedBox(
@@ -951,12 +949,15 @@ class _FundoCientificoState extends State<_FundoCientifico>
           ),
         ),
         IgnorePointer(
-          child: RepaintBoundary(
-            child: AnimatedBuilder(
-              animation: _animacao,
-              builder: (context, _) => CustomPaint(
-                painter: _PintorFundoCientifico(
-                  tempo: reduzirMovimento ? 0 : _animacao.value,
+          child: TickerMode(
+            enabled: !reduzirMovimento,
+            child: RepaintBoundary(
+              child: AnimatedBuilder(
+                animation: _animacao,
+                builder: (context, _) => CustomPaint(
+                  painter: _PintorFundoCientifico(
+                    tempo: reduzirMovimento ? 0 : _animacao.value,
+                  ),
                 ),
               ),
             ),
@@ -964,7 +965,6 @@ class _FundoCientificoState extends State<_FundoCientifico>
         ),
         widget.child,
       ],
-      ),
     );
   }
 }
