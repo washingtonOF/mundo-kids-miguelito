@@ -597,9 +597,15 @@ class TelaJogos extends StatelessWidget {
             icon: const Icon(Icons.home_outlined, size: 22),
             onPressed: () {
               final navigator = Navigator.of(context);
-              navigator.popUntil((route) => route.settings.name == '/jogos' || route.isFirst);
-              if (ModalRoute.of(context)?.settings.name != '/jogos' &&
-                  navigator.canPop() == false) {
+              var encontrouMenu = false;
+              navigator.popUntil((route) {
+                if (route.settings.name == '/jogos') {
+                  encontrouMenu = true;
+                  return true;
+                }
+                return route.isFirst;
+              });
+              if (!encontrouMenu) {
                 navigator.push(MaterialPageRoute(
                   settings: const RouteSettings(name: '/jogos'),
                   builder: (_) => const TelaJogos(),
