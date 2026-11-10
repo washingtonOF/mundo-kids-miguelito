@@ -918,7 +918,7 @@ class _FundoCientificoState extends State<_FundoCientifico>
     super.initState();
     _animacao = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 12),
+      duration: const Duration(milliseconds: 2800),
     )..repeat();
   }
 
@@ -1007,7 +1007,7 @@ class _PintorFundoCientifico extends CustomPainter {
     // Elétrons com posições diferentes tornam o giro visível mesmo em
     // órbitas simétricas. Cada átomo flutua e os elétrons percorrem elipses.
     canvas.save();
-    canvas.translate(centro.dx, centro.dy + 16 * math.sin(t * 2 * math.pi));
+    canvas.translate(centro.dx, centro.dy + 30 * math.sin(t * 2 * math.pi));
     final linha = Paint()
       ..color = cor.withValues(alpha: 0.7)
       ..style = PaintingStyle.stroke
@@ -1024,7 +1024,7 @@ class _PintorFundoCientifico extends CustomPainter {
         ),
         linha,
       );
-      final fase = t * 2 * math.pi * (i.isEven ? 2 : -2) + i * 2.1;
+      final fase = t * 2 * math.pi * (i.isEven ? 1 : -1) + i * 2.1;
       final eletron = Offset(
         raio * math.cos(fase),
         raio * 0.4 * math.sin(fase),
@@ -1055,14 +1055,14 @@ class _PintorFundoCientifico extends CustomPainter {
     // Hélice com torção real: os fios e degraus mudam de posição a cada frame.
     // O deslocamento vertical também torna a flutuação perceptível.
     final yInicial = centro.dy - altura / 2 +
-        18 * math.sin(t * 2 * math.pi);
+        35 * math.sin(t * 2 * math.pi);
     final ladoA = Path();
     final ladoB = Path();
     const passos = 72;
     for (var i = 0; i <= passos; i++) {
       final f = i / passos;
       final y = yInicial + f * altura;
-      final fase = f * math.pi * 4 + t * math.pi * 4;
+      final fase = f * math.pi * 4 + t * math.pi * 2;
       final x = 21 * math.sin(fase);
       if (i == 0) {
         ladoA.moveTo(centro.dx + x, y);
