@@ -43,5 +43,28 @@ test('autorização de sala e vagas', async () => {
   }));
   // Teste de privacidade: terceiros não podem consultar dados de vagas.
   await assertFails(db('estranho').ref(path + '/vagas/vaga1').get());
+
+  // Apenas o criador pode iniciar, com dois jogadores.
+  await assertFails(db('convidado').ref(path + '/status').set('jogando'));
+  await assertFails(db('estranho').ref(path + '/inicioEm').set(Date.now()));
+  const inicio = Date.now();
+  await assertSucceeds(db('criador').ref(path).update({
+    status: 'jogando', inicioEm: inicio
+  }));
+  await assertFails(db('estranho').ref(path + '/vagas/vaga2').set({
+    uid: 'estranho', nome: 'Intruso', pontos: 0
+  }));
+
+  // Cada jogador registra uma única resposta na rodada atual.
+  const resposta = { alternativa: 1, respondidoEm: Date.now() };
+  await assertSucceeds(db('convidado').ref(path + '/respostas/0/convidado').set(resposta));
+  await assertFails(db('convidado').ref(path + '/respostas/0/convidado').set(resposta));
+  await assertFails(db('estranho').ref(path + '/respostas/0/estranho').set(resposta));
+  await assertFails(db('convidado').ref(path + '/respostas/0/criador').set(resposta));
+  await assertFails(db('convidado').ref(path + '/respostas/0/convidado2').set({
+    alternativa: 5, respondidoEm: Date.now()
+  }));
+  await assertFails(db('convidado').ref(path + '/vagas/vaga0/pontos').set(999));
+  await assertFails(db('convidado').ref(path + '/vagas/vaga1/pontos').set(999));
 });
 after(async () => { if (env) await env.cleanup(); });
