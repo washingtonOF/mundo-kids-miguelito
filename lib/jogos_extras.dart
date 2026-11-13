@@ -1,3 +1,4 @@
+import 'botao_voz.dart';
 import 'botoes_navegacao.dart';
 import 'dart:async';
 import 'banco_conteudo.dart' as banco;
@@ -19,7 +20,7 @@ class JogosExtras extends StatelessWidget {
     final ingles = ConfiguracoesJogo.instancia.idioma == 'en-US';
     return Scaffold(
     appBar: AppBar(
-        actions: const [BotoesNavegacao()],title: Text(ingles ? '⭐ More adventures' : '⭐ Mais aventuras')),
+        actions: const [BotaoVoz(), BotoesNavegacao()],title: Text(ingles ? '⭐ More adventures' : '⭐ Mais aventuras')),
     body: ListView(
       padding: const EdgeInsets.all(20),
       children: [
@@ -418,7 +419,7 @@ class _JogoQuizState extends State<JogoQuiz> {
     if (indice >= perguntas.length) {
       return Scaffold(
         appBar: AppBar(
-        actions: const [BotoesNavegacao()],title: Text(ingles ? '🏆 Results' : '🏆 Resultado')),
+        actions: const [BotaoVoz(), BotoesNavegacao()],title: Text(ingles ? '🏆 Results' : '🏆 Resultado')),
         body: SafeArea(
           child: Center(
             child: SingleChildScrollView(
@@ -448,7 +449,7 @@ class _JogoQuizState extends State<JogoQuiz> {
     return Scaffold(
       backgroundColor: const Color(0xFFFFF8E5),
       appBar: AppBar(
-        actions: const [BotoesNavegacao()],title: Text(ingles ? (widget.tipo == 'Português' ? 'Portuguese' : 'Colors and shapes') : widget.tipo)),
+        actions: const [BotaoVoz(), BotoesNavegacao()],title: Text(ingles ? (widget.tipo == 'Português' ? 'Portuguese' : 'Colors and shapes') : widget.tipo)),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 650),
@@ -644,7 +645,7 @@ class _JogoMemoriaState extends State<JogoMemoria> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
-        actions: const [BotoesNavegacao()],title: Text(ingles ? '🧠 Memory Game' : '🧠 Jogo da Memória')),
+        actions: const [BotaoVoz(), BotoesNavegacao()],title: Text(ingles ? '🧠 Memory Game' : '🧠 Jogo da Memória')),
     body: SafeArea(
       child: Center(
       child: ConstrainedBox(
@@ -741,7 +742,7 @@ class _ConfigurarEquipesState extends State<ConfigurarEquipes> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
-        actions: const [BotoesNavegacao()],title: Text(ingles ? '🏆 Set up teams' : '🏆 Preparar equipes')),
+        actions: const [BotaoVoz(), BotoesNavegacao()],title: Text(ingles ? '🏆 Set up teams' : '🏆 Preparar equipes')),
     body: Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 500),
@@ -967,7 +968,7 @@ class _BatalhaEquipesState extends State<BatalhaEquipes> {
 
     return Scaffold(
       appBar: AppBar(
-        actions: const [BotoesNavegacao()],title: Text(ingles ? '🏆 Team battle' : '🏆 Batalha de equipes')),
+        actions: const [BotaoVoz(), BotoesNavegacao()],title: Text(ingles ? '🏆 Team battle' : '🏆 Batalha de equipes')),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 700),

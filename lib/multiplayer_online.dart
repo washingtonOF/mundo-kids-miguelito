@@ -1,3 +1,4 @@
+import 'botao_voz.dart';
 import 'botoes_navegacao.dart';
 import 'main.dart' show EntradaMundoKids;
 import 'dart:math' as math;
@@ -1414,6 +1415,7 @@ class _TelaCampeonatoMultiplayerState extends State<TelaCampeonatoMultiplayer> {
   Widget build(BuildContext context) {
     return _protegerSaidaMultiplayer(context, Scaffold(
       appBar: AppBar(actions: [
+          const BotaoVoz(),
           IconButton(
             tooltip: 'Voltar ao início',
             icon: const Icon(Icons.home_rounded),

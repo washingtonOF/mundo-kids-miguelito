@@ -124,8 +124,8 @@ class TelaConfiguracoes extends StatelessWidget {
                 onChanged: config.alterarModoTranquilo,
               ),
               SwitchListTile(
-                title: Text(ingles ? 'Voice instructions' : 'Instruções em áudio'),
-                subtitle: Text(ingles ? 'Enable spoken guidance.' : 'Permitir orientações faladas.'),
+                title: Text(ingles ? 'Voice narration' : 'Narração e voz'),
+                subtitle: Text(ingles ? 'Enable or disable spoken narration throughout the games.' : 'Ativar ou desativar a narração nas atividades.'),
                 value: config.instrucoesAudio,
                 onChanged: config.alterarInstrucoesAudio,
               ),
