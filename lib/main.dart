@@ -1,3 +1,4 @@
+import 'botao_voz.dart';
 import 'abrir_central.dart';
 import 'botoes_navegacao.dart';
 // Miguelzãoo — em desenvolvimento.
@@ -356,7 +357,7 @@ class TelaModoJogo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: const [BotoesNavegacao()],
+        actions: const [BotaoVoz(), BotoesNavegacao()],
         title: Text(ConfiguracoesJogo.instancia.idioma == 'pt-BR' ? '🎮 Como vamos jogar?' : '🎮 How shall we play?'),
         backgroundColor: Colors.white.withValues(alpha: 0.88),
       ),
@@ -710,7 +711,7 @@ class TelaNivel extends StatelessWidget {
       backgroundColor: const Color(0xFF0B5FB5),
       appBar: AppBar(
         title: const Text('🔢 Laboratório de Matemática'),
-        actions: const [BotoesNavegacao()],
+        actions: const [BotaoVoz(), BotoesNavegacao()],
         backgroundColor: const Color(0xFFEDF9FF),
         foregroundColor: const Color(0xFF153A73),
       ),
@@ -1262,7 +1263,7 @@ class _TelaMatematicaState extends State<TelaMatematica> {
       backgroundColor: modoTranquilo ? const Color(0xFFF1F5F9) : const Color(0xFF0C77CC),
       appBar: AppBar(
         title: Text('🔢 Matemática • ${widget.nivel.titulo}'),
-        actions: const [BotoesNavegacao()],
+        actions: const [BotaoVoz(), BotoesNavegacao()],
         backgroundColor: const Color(0xFFF3FAFF),
       ),
       body: Container(
@@ -1595,7 +1596,7 @@ class TelaResultado extends StatelessWidget {
         : 'Cada tentativa ajuda você a aprender!';
     return Scaffold(
       appBar: AppBar(
-        actions: const [BotoesNavegacao()],title: const Text('🏆 Resultado')),
+        actions: const [BotaoVoz(), BotoesNavegacao()],title: const Text('🏆 Resultado')),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
